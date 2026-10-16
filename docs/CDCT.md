@@ -182,7 +182,17 @@ flowchart LR
 | Graphiques | Chart.js (conservé) ; évaluer **uPlot** ou du SVG généré côté serveur | À évaluer (Should) | Poids des pages (ENF-PER-3) |
 | Détection de secrets | **Gitleaks** (ou TruffleHog) en CI + *secret scanning* GitHub | **Nouveau** | ENF-SEC-1 |
 
-> **À vérifier au moment de l'implémentation :** la version de CO2.js retenue expose le SWDM v4 (`version: 4`) et l'option de notation (`rating: true`), et ses données d'intensité couvrent les pays visés. À défaut, le module de calcul implémente les constantes de la méthodologie §3.3 et utilise CO2.js uniquement pour générer les vecteurs de test.
+> **Vérifié (CO2.js 0.19.0) :**
+> - `model: "swd", version: 4` utilise exactement les constantes de la méthodologie §3.3 (Go décimal, 494 gCO2e/kWh) ;
+> - `rating: true` applique l'échelle A+–F, bornes incluses ;
+> - les intensités moyennes Ember couvrent 208 pays (codes alpha-3).
+>
+> Le module `calc/` implémente lui-même ces constantes (fonction pure, sans dépendance à l'exécution). Il utilise CO2.js **uniquement pour générer les vecteurs de test** : l'écart mesuré est nul.
+>
+> Limites relevées :
+> - l'année de référence des intensités n'est pas publiée par CO2.js ;
+> - CO2.js renvoie `NaN` pour un code pays invalide (notre module retombe sur la moyenne mondiale) ;
+> - la valeur `WORLD` du jeu Ember (472,94) diffère des 494 retenus par le SWDM v4 (nous suivons le SWDM).
 
 ### 3.3 Structure du dépôt (monorepo)
 
@@ -203,12 +213,16 @@ Greenscore/
 │   ├── src/
 │   │   ├── background/    collector.ts, pageviews.ts, sessions.ts, sync.ts, store.ts
 │   │   ├── content/       resource-timing.ts
-│   │   ├── calc/          swdm.ts, rating.ts, domain.ts (partagé, testé)
+│   │   ├── domain.ts      domaine enregistrable (tldts)
 │   │   ├── popup/  options/  onboarding/
 │   │   └── i18n/
 │   ├── manifests/         manifest.firefox.json, manifest.chrome.json
 │   └── tests/
-├── calc/
+├── calc/                  package partagé @greenscore/calc (JS ESM + JSDoc), importé par le plugin
+│   ├── src/               swdm.js, rating.js, constants.js, grid-intensity.data.js
+│   ├── scripts/           génération des intensités et des vecteurs (CO2.js)
+│   ├── test/              tests node:test
+│   ├── grid-intensity.json  intensités par pays (Ember, CC BY-SA 4.0), lues aussi par le back-end
 │   └── test-vectors.json  vecteurs de référence (générés avec CO2.js)
 ├── bench/                 banc de test de précision (§12) : corpus, scripts, résultats
 ├── docs/                  CDCF, CDCT, méthodologie, ADR (FR, puis EN)
@@ -312,8 +326,10 @@ Les écritures sont **regroupées** (au plus une écriture par seconde et par on
 
 ### 5.1 Interfaces
 
+Le module partagé `calc/` est écrit en **JavaScript ESM avec types JSDoc**, et non en TypeScript. Node 20 (version utilisée par l'équipe et la CI) n'exécute pas TypeScript nativement, et ce format reste consommable sans étape de compilation par le plugin TypeScript (via le bundler) et par les outils du banc de test. Les signatures, exprimées ici en notation TypeScript, correspondent aux types JSDoc de `calc/src/swdm.js` et `calc/src/rating.js`.
+
 ```ts
-// plugin/src/calc/swdm.ts
+// calc/src/swdm.js (types JSDoc)
 export interface Measure { bytes: number; country: string /* ISO-3166 alpha-2 */ }
 export interface Breakdown {
   operational: { dataCenter: number; network: number; device: number }; // gCO2e
@@ -338,7 +354,7 @@ pub fn rate(ug_per_page_view: u64) -> Rating;
 - **DOIT :** le back-end **recalcule** l'empreinte à partir des octets et du pays reçus. La valeur envoyée par le plugin sert uniquement à l'affichage local.
 - **DOIT :** stockage en **microgrammes entiers** (`u64` / `INT UNSIGNED`), pour ne pas perdre de précision (A-10). Arrondi uniquement à l'affichage (2 chiffres significatifs, unité adaptée : mg, g, kg).
 - **DOIT :** le plugin et le back-end passent **tous** les cas de `calc/test-vectors.json` (tolérance 10⁻⁹ g). Ces vecteurs sont générés par un script qui utilise CO2.js, et versionnés avec le modèle.
-- **Données d'intensité :** fichier `calc/grid-intensity.json` (pays → gCO2e/kWh, année, source Ember, licence). Il est copié dans le plugin et dans le back-end à la compilation. L'attribution s'affiche dans la page « Notre méthode ».
+- **Données d'intensité :** fichier `calc/grid-intensity.json` (pays alpha-2 → gCO2e/kWh, source Ember, licence ; `referenceYear` à renseigner). Il est généré depuis CO2.js par `npm run generate:intensity` et copié dans le plugin et dans le back-end à la compilation. L'attribution s'affiche dans la page « Notre méthode ».
 
 ### 5.3 Exemple de vecteur de test
 
@@ -346,14 +362,14 @@ pub fn rate(ug_per_page_view: u64) -> Rating;
 {
   "model_version": "swdm4-ember-v1",
   "cases": [
-    { "name": "2 Mio, monde", "bytes": 2097152, "country": "ZZ", "expected_gco2e": 0.31080 },
-    { "name": "2 Mio, France", "bytes": 2097152, "country": "FR", "expected_gco2e": "<calculé avec CO2.js>" },
-    { "name": "0 octet",       "bytes": 0,       "country": "FR", "expected_gco2e": 0 }
+    { "name": "2 Mio, monde",  "bytes": 2097152, "country": null, "expected": { "gco2e": 0.31079792640000004, "rating": "E" } },
+    { "name": "2 Mio, France", "bytes": 2097152, "country": "FR", "expected": { "gco2e": 0.17967353954304,    "rating": "C" } },
+    { "name": "0 octet",       "bytes": 0,       "country": "FR", "expected": { "gco2e": 0,                   "rating": "A+" } }
   ]
 }
 ```
 
-(`ZZ` = pays inconnu → moyenne mondiale de 494 g/kWh pour tous les segments : 0,002097152 Go × 0,30 kWh/Go × 494 g/kWh ≈ 0,31080 g. La valeur exacte est produite par le script de génération.)
+Extrait simplifié du fichier réel `calc/test-vectors.json` : 13 cas de calcul, avec la répartition par segment, et 16 cas de notation. `country: null` = moyenne mondiale de 494 g/kWh pour tous les segments : 0,002097152 Go × 0,30 kWh/Go × 494 g/kWh ≈ 0,31080 g. Pour la France, l'intensité Ember fournie par CO2.js 0.19.0 est de 44,18 g/kWh.
 
 ---
 
@@ -669,7 +685,7 @@ Toutes les mesures de référence sont faites au **Sprint 2**, consignées dans 
 
 | Niveau | Cible | Outils | Exemples |
 |---|---|---|---|
-| Unitaire (calcul) | `plugin/src/calc`, `backend/src/calc` | Vitest, `cargo test` | Vecteurs de référence ; échelle de notes (bornes exactes 0,040 / 0,079…) ; domaine enregistrable (`a.b.exemple.co.uk` → `exemple.co.uk`) |
+| Unitaire (calcul) | `calc/src`, `backend/src/calc` | `node:test` (en place : 45 tests), `cargo test` | Vecteurs de référence ; échelle de notes (bornes exactes 0,040 / 0,079…) ; domaine enregistrable (`a.b.exemple.co.uk` → `exemple.co.uk`) |
 | Unitaire (collecte) | `collector.ts`, `pageviews.ts` | Vitest + faux événements `webRequest` | Cache = 0 ; `Content-Length` sans division ; navigation SPA : pas de double comptage ; deux onglets en parallèle : rien n'est perdu |
 | Intégration (API) | Contrôleurs + MySQL | `cargo test` + service MySQL en CI (existant) | Rejet d'un `user_id` dans le corps (S-01) ; idempotence de `batch_id` ; seuils d'organisation ; k-anonymat de l'open data ; suppression du compte en cascade |
 | Bout en bout | Plugin chargé dans un vrai navigateur | Playwright (Chromium, extension chargée) ; `web-ext` + Selenium (Firefox) | Session de 10 pages = somme des pages ; survie à la mise en veille du service worker |
@@ -793,7 +809,7 @@ Les résultats sont publiés dans `bench/results/<version>-<date>.md`, avec les 
 | Exigence (CDCF) | Composants | Preuve |
 |---|---|---|
 | EF-PRE-1, O1, O2 | `plugin/src/background/collector.ts`, script de contenu | Tests unitaires de collecte ; banc de test §12 |
-| EF-PRE-2, O4 | `plugin/src/calc`, `backend/src/calc`, `calc/test-vectors.json` | Vecteurs de test en CI |
+| EF-PRE-2, O4 | `calc/src`, `backend/src/calc`, `calc/test-vectors.json` | Vecteurs de test en CI (`.github/workflows/calc.yml`) |
 | EF-PRE-3, O3 | Calcul pur, intensité embarquée | Banc de test (5 passages) |
 | EF-PRE-4 | Page « Notre méthode », `GET /api/v1/methodology` | Revue ; lien depuis le popup |
 | EF-PRE-5 | `backend/src/domain/summary.rs` | Tests d'intégration (centile, seuil de 20) |

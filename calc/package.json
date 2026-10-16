@@ -1,0 +1,22 @@
+{
+  "name": "@greenscore/calc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GreenScore Web – estimation de l'empreinte carbone (SWDM v4), module partagé plugin / outils",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "generate:vectors": "node scripts/generate-vectors.mjs",
+    "generate:intensity": "node scripts/generate-grid-intensity.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@tgwf/co2": "0.19.0",
+    "i18n-iso-countries": "7.14.0"
+  }
+}
