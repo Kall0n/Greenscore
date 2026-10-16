@@ -1,0 +1,25 @@
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+
+# Rust
+target/
+
+# Node / SvelteKit
+node_modules/
+.svelte-kit/
+build/
+dist/
+
+# Plugin
+web-ext-artifacts/
+
+# Documents de travail (PDF exportés, versions intermédiaires)
+*.pdf
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
