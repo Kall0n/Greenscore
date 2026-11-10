@@ -35,6 +35,7 @@ L'accord des auteurs précédents sur la licence reste à obtenir avant toute pu
 |---|---|
 | [Cahier des charges fonctionnel (CDCF)](docs/CDCF.md) | Analyse du besoin, objectifs mesurables avant / après, exigences, anonymisation, dimensionnement, stratégie de preuve |
 | [Cahier des charges technique (CDCT)](docs/CDCT.md) | Audit du code existant, architecture, plugin, données, API, sécurité, tests, déploiement |
+| [Modifications du code de l'estimation](docs/modifications-estimation.md) | Avant / après du plugin 1.6.2 → 1.7.0 : chaque correction, son code et sa preuve |
 | [Méthodologie de calcul](docs/methodologie-calcul.md) | Formules, constantes et sources de l'estimation de l'empreinte carbone (modèle v2 hérité et modèle v3) |
 | [Décisions d'architecture (ADR)](docs/adr/) | Décisions tracées et leur justification |
 | [Module de calcul](calc/README.md) | Utilisation, fichiers générés, tests et limites connues du module `calc/` |
