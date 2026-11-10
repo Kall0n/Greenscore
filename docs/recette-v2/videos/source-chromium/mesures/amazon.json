@@ -1,0 +1,99 @@
+{
+ "id": "amazon",
+ "title": "Amazon : recherche « gourde inox »",
+ "url": "https://www.amazon.fr/s?k=gourde+inox",
+ "recordedAt": "2026-11-10T11:18:48.310Z",
+ "consent": null,
+ "chromium": "Chrome/159.0.8153.0",
+ "versions": {
+  "v2": "1.6.2",
+  "v3": "1.7.0"
+ },
+ "truth": {
+  "bytes": 3440434,
+  "requests": 156
+ },
+ "loadSeconds": 107.224,
+ "spaPages": [
+  "Amazon.fr : gourde inox"
+ ],
+ "state": {
+  "v2": {
+   "url": "https://www.amazon.fr/s?k=gourde+inox",
+   "requests": 161,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 10.7,
+   "rating": null,
+   "intensity": 0
+  },
+  "v3": {
+   "url": "https://www.amazon.fr/s?k=gourde+inox",
+   "requests": 161,
+   "transferred": 2667764,
+   "measured": 160,
+   "gco2e": 0.228561,
+   "rating": "D",
+   "intensity": 44.18
+  },
+  "v3Closed": [
+   {
+    "url": "https://www.amazon.fr/s?k=gourde+inox",
+    "bytes": 18310,
+    "requests": 5,
+    "measured": 4,
+    "gco2e": 0.001569,
+    "rating": "A+"
+   }
+  ],
+  "v2After": {
+   "url": "https://www.amazon.fr/s?k=gourde+inox",
+   "requests": 163,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.79,
+   "rating": null,
+   "intensity": 73
+  }
+ },
+ "popupText": {
+  "v2": "GreenScore Web Site actuel : amazon.fr Dans votre pays (France), cette page consomme 1.78 gC0 2 e C'est 2.41x supérieur à la moyenne ! Cela correspond à : 3.6 emails envoyés 13.7 litres d'eau du robinet 8.9 recherches sur le web Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3": "GreenScore Web Site actuel : amazon.fr Dans votre pays (France), cette page consomme 0.23 gC0 2 e Note D (échelle SWDM v4) Cela correspond à : 1.8 litres d'eau du robinet 1.1 recherches sur le web 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v2Cache": "GreenScore Web Site actuel : amazon.fr Dans votre pays (France), cette page consomme 1.31 gC0 2 e C'est 1.77x supérieur à la moyenne ! Cela correspond à : 10.1 litres d'eau du robinet 6.5 recherches sur le web 2.6 emails envoyés Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3Cache": "GreenScore Web Site actuel : amazon.fr Dans votre pays (France), cette page consomme 0.0023 gC0 2 e Note A+ (échelle SWDM v4) Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter"
+ },
+ "truth2": {
+  "bytes": 54235,
+  "requests": 130,
+  "cached": 107
+ },
+ "state2": {
+  "v2": {
+   "url": "https://www.amazon.fr/s?k=gourde+inox",
+   "requests": 119,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.31,
+   "rating": null,
+   "intensity": 73
+  },
+  "v3": {
+   "url": "https://www.amazon.fr/s?k=gourde+inox",
+   "requests": 119,
+   "transferred": 27323,
+   "measured": 119,
+   "gco2e": 0.002341,
+   "rating": "A+",
+   "intensity": 44.18
+  },
+  "v2After": {
+   "url": "https://www.amazon.fr/s?k=gourde+inox",
+   "requests": 120,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.32,
+   "rating": null,
+   "intensity": 73
+  }
+ }
+}

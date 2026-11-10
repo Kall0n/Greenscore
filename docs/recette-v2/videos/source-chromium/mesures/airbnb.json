@@ -1,0 +1,90 @@
+{
+ "id": "airbnb",
+ "title": "Airbnb : page d'accueil",
+ "url": "https://www.airbnb.fr/",
+ "recordedAt": "2026-11-10T11:20:44.019Z",
+ "consent": "Uniquement les cookies nécessaires",
+ "chromium": "Chrome/159.0.8153.0",
+ "versions": {
+  "v2": "1.6.2",
+  "v3": "1.7.0"
+ },
+ "truth": {
+  "bytes": 4603706,
+  "requests": 164
+ },
+ "loadSeconds": 66.069,
+ "spaPages": [
+  "Airbnb | Locations de vacances, cabanes, maisons de plage, etc."
+ ],
+ "state": {
+  "v2": {
+   "url": "https://www.airbnb.fr/",
+   "requests": 162,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 10.86,
+   "rating": null,
+   "intensity": 0
+  },
+  "v3": {
+   "url": "https://www.airbnb.fr/",
+   "requests": 163,
+   "transferred": 4478783,
+   "measured": 161,
+   "gco2e": 0.38372,
+   "rating": "F",
+   "intensity": 44.18
+  },
+  "v3Closed": [],
+  "v2After": {
+   "url": "https://www.airbnb.fr/",
+   "requests": 163,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.8,
+   "rating": null,
+   "intensity": 73
+  }
+ },
+ "popupText": {
+  "v2": "GreenScore Web Site actuel : airbnb.fr Dans votre pays (France), cette page consomme 1.79 gC0 2 e C'est 2.42x supérieur à la moyenne ! Cela correspond à : 3.6 emails envoyés 13.8 litres d'eau du robinet 9.0 recherches sur le web Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3": "GreenScore Web Site actuel : airbnb.fr Dans votre pays (France), cette page consomme 0.38 gC0 2 e Note F (échelle SWDM v4) Cela correspond à : 3.0 litres d'eau du robinet 1.9 recherches sur le web 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v2Cache": "GreenScore Web Site actuel : airbnb.fr Dans votre pays (France), cette page consomme 1.66 gC0 2 e C'est 2.24x supérieur à la moyenne ! Cela correspond à : 12.8 litres d'eau du robinet 3.3 emails envoyés 8.3 recherches sur le web Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3Cache": "GreenScore Web Site actuel : airbnb.fr Dans votre pays (France), cette page consomme 0.00064 gC0 2 e Note A+ (échelle SWDM v4) Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter"
+ },
+ "truth2": {
+  "bytes": 80189,
+  "requests": 161,
+  "cached": 129
+ },
+ "state2": {
+  "v2": {
+   "url": "https://www.airbnb.fr/",
+   "requests": 150,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.66,
+   "rating": null,
+   "intensity": 73
+  },
+  "v3": {
+   "url": "https://www.airbnb.fr/",
+   "requests": 150,
+   "transferred": 7411,
+   "measured": 149,
+   "gco2e": 0.000635,
+   "rating": "A+",
+   "intensity": 44.18
+  },
+  "v2After": {
+   "url": "https://www.airbnb.fr/",
+   "requests": 150,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.66,
+   "rating": null,
+   "intensity": 73
+  }
+ }
+}

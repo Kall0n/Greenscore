@@ -1,0 +1,90 @@
+{
+ "id": "wikipedia",
+ "title": "Article Wikipédia « Centre de données »",
+ "url": "https://fr.wikipedia.org/wiki/Centre_de_donn%C3%A9es",
+ "recordedAt": "2026-11-10T11:59:10.924Z",
+ "consent": null,
+ "chromium": "Chrome/159.0.8153.0",
+ "versions": {
+  "v2": "1.6.2",
+  "v3": "1.7.0"
+ },
+ "truth": {
+  "bytes": 706352,
+  "requests": 46
+ },
+ "loadSeconds": 29.352,
+ "spaPages": [
+  "Centre de données — Wikipédia"
+ ],
+ "state": {
+  "v2": {
+   "url": "https://fr.wikipedia.org/wiki/Centre_de_donn%C3%A9es",
+   "requests": 45,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 3,
+   "rating": null,
+   "intensity": 0
+  },
+  "v3": {
+   "url": "https://fr.wikipedia.org/wiki/Centre_de_donn%C3%A9es",
+   "requests": 46,
+   "transferred": 642891,
+   "measured": 46,
+   "gco2e": 0.05508,
+   "rating": "A",
+   "intensity": 44.18
+  },
+  "v3Closed": [],
+  "v2After": {
+   "url": "https://fr.wikipedia.org/wiki/Centre_de_donn%C3%A9es",
+   "requests": 45,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.5,
+   "rating": null,
+   "intensity": 73
+  }
+ },
+ "popupText": {
+  "v2": "GreenScore Web Site actuel : fr.wikipedia.org Dans votre pays (France), cette page consomme 0.50 gC0 2 e C'est 1.48x inférieur à la moyenne ! Cela correspond à : 1.0 emails envoyés 3.9 litres d'eau du robinet 2.5 recherches sur le web Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3": "GreenScore Web Site actuel : fr.wikipedia.org Dans votre pays (France), cette page consomme 0.055 gC0 2 e Note A (échelle SWDM v4) Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v2Cache": "GreenScore Web Site actuel : fr.wikipedia.org Dans votre pays (France), cette page consomme 0.23 gC0 2 e C'est 3.22x inférieur à la moyenne ! Cela correspond à : 1.1 recherches sur le web 1.8 litres d'eau du robinet 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3Cache": "GreenScore Web Site actuel : fr.wikipedia.org Dans votre pays (France), cette page consomme 0.017 gC0 2 e Note A+ (échelle SWDM v4) Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter"
+ },
+ "truth2": {
+  "bytes": 207601,
+  "requests": 40,
+  "cached": 40
+ },
+ "state2": {
+  "v2": {
+   "url": "https://fr.wikipedia.org/wiki/Centre_de_donn%C3%A9es",
+   "requests": 21,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.23,
+   "rating": null,
+   "intensity": 73
+  },
+  "v3": {
+   "url": "https://fr.wikipedia.org/wiki/Centre_de_donn%C3%A9es",
+   "requests": 21,
+   "transferred": 199952,
+   "measured": 21,
+   "gco2e": 0.017131,
+   "rating": "A+",
+   "intensity": 44.18
+  },
+  "v2After": {
+   "url": "https://fr.wikipedia.org/wiki/Centre_de_donn%C3%A9es",
+   "requests": 21,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.23,
+   "rating": null,
+   "intensity": 73
+  }
+ }
+}

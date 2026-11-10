@@ -1,0 +1,127 @@
+{
+ "id": "svelte",
+ "title": "Application monopage : 5 pages de la doc Svelte",
+ "url": "https://svelte.dev/docs/svelte/$state",
+ "recordedAt": "2026-11-10T11:14:51.887Z",
+ "consent": null,
+ "chromium": "Chrome/159.0.8153.0",
+ "versions": {
+  "v2": "1.6.2",
+  "v3": "1.7.0"
+ },
+ "truth": {
+  "bytes": 299923,
+  "requests": 52
+ },
+ "loadSeconds": 79.578,
+ "spaPages": [
+  "Overview • Svelte Docs",
+  "Getting started • Svelte Docs",
+  ".svelte files • Svelte Docs",
+  "What are runes? • Svelte Docs",
+  "$state • Svelte Docs"
+ ],
+ "state": {
+  "v2": {
+   "url": "https://svelte.dev/docs/svelte/$state",
+   "requests": 53,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 3.52,
+   "rating": null,
+   "intensity": 0
+  },
+  "v3": {
+   "url": "https://svelte.dev/docs/svelte/$state",
+   "requests": 1,
+   "transferred": 24914,
+   "measured": 1,
+   "gco2e": 0.002135,
+   "rating": "A+",
+   "intensity": 44.18
+  },
+  "v3Closed": [
+   {
+    "url": "https://svelte.dev/docs/svelte/overview",
+    "bytes": 256257,
+    "requests": 50,
+    "measured": 49,
+    "gco2e": 0.021955,
+    "rating": "A+"
+   },
+   {
+    "url": "https://svelte.dev/docs/svelte/getting-started",
+    "bytes": 12546,
+    "requests": 1,
+    "measured": 1,
+    "gco2e": 0.001075,
+    "rating": "A+"
+   },
+   {
+    "url": "https://svelte.dev/docs/svelte/svelte-files",
+    "bytes": 13136,
+    "requests": 1,
+    "measured": 1,
+    "gco2e": 0.001125,
+    "rating": "A+"
+   },
+   {
+    "url": "https://svelte.dev/docs/svelte/what-are-runes",
+    "bytes": 12344,
+    "requests": 1,
+    "measured": 1,
+    "gco2e": 0.001058,
+    "rating": "A+"
+   }
+  ],
+  "v2After": {
+   "url": "https://svelte.dev/docs/svelte/$state",
+   "requests": 53,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.58,
+   "rating": null,
+   "intensity": 73
+  }
+ },
+ "popupText": {
+  "v2": "GreenScore Web Site actuel : svelte.dev Dans votre pays (France), cette page consomme 0.58 gC0 2 e C'est 1.28x inférieur à la moyenne ! Cela correspond à : 4.5 litres d'eau du robinet 2.9 recherches sur le web 1.2 emails envoyés Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3": "GreenScore Web Site actuel : svelte.dev Dans votre pays (France), cette page consomme 0.0021 gC0 2 e Note A+ (échelle SWDM v4) Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v2Cache": "GreenScore Web Site actuel : svelte.dev Dans votre pays (France), cette page consomme 0.07 gC0 2 e C'est 10.57x inférieur à la moyenne ! Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3Cache": "GreenScore Web Site actuel : svelte.dev Dans votre pays (France), cette page consomme 0.0032 gC0 2 e Note A+ (échelle SWDM v4) Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter"
+ },
+ "truth2": {
+  "bytes": 37440,
+  "requests": 48,
+  "cached": 54
+ },
+ "state2": {
+  "v2": {
+   "url": "https://svelte.dev/docs/svelte/$state",
+   "requests": 6,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.07,
+   "rating": null,
+   "intensity": 73
+  },
+  "v3": {
+   "url": "https://svelte.dev/docs/svelte/$state",
+   "requests": 6,
+   "transferred": 37239,
+   "measured": 6,
+   "gco2e": 0.00319,
+   "rating": "A+",
+   "intensity": 44.18
+  },
+  "v2After": {
+   "url": "https://svelte.dev/docs/svelte/$state",
+   "requests": 6,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.07,
+   "rating": null,
+   "intensity": 73
+  }
+ }
+}

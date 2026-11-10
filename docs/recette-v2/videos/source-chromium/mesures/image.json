@@ -1,0 +1,90 @@
+{
+ "id": "image",
+ "title": "Une photo JPEG de 14 Mo",
+ "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Paris_%2875004%29_Quai_aux_Fleurs.jpg",
+ "recordedAt": "2026-11-10T11:05:58.116Z",
+ "consent": null,
+ "chromium": "Chrome/159.0.8153.0",
+ "versions": {
+  "v2": "1.6.2",
+  "v3": "1.7.0"
+ },
+ "truth": {
+  "bytes": 14038132,
+  "requests": 2
+ },
+ "loadSeconds": 48.971,
+ "spaPages": [
+  "Paris_(75004)_Quai_aux_Fleurs.jpg (6000×4000)"
+ ],
+ "state": {
+  "v2": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Paris_%2875004%29_Quai_aux_Fleurs.jpg",
+   "requests": 1,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.44,
+   "rating": null,
+   "intensity": 0
+  },
+  "v3": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Paris_%2875004%29_Quai_aux_Fleurs.jpg",
+   "requests": 2,
+   "transferred": 14026026,
+   "measured": 2,
+   "gco2e": 1.20168,
+   "rating": "F",
+   "intensity": 44.18
+  },
+  "v3Closed": [],
+  "v2After": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Paris_%2875004%29_Quai_aux_Fleurs.jpg",
+   "requests": 1,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.07,
+   "rating": null,
+   "intensity": 71
+  }
+ },
+ "popupText": {
+  "v2": "GreenScore Web Site actuel : upload.wikimedia.org Dans votre pays (France), cette page consomme 0.07 gC0 2 e C'est 10.57x inférieur à la moyenne ! Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3": "GreenScore Web Site actuel : upload.wikimedia.org Dans votre pays (France), cette page consomme 1.20 gC0 2 e Note F (échelle SWDM v4) Cela correspond à : 9.2 litres d'eau du robinet 2.4 emails envoyés 6.0 recherches sur le web Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v2Cache": "GreenScore Web Site actuel : upload.wikimedia.org Dans votre pays (France), cette page consomme 0.08 gC0 2 e C'est 9.25x inférieur à la moyenne ! Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3Cache": "GreenScore Web Site actuel : upload.wikimedia.org Dans votre pays (France), cette page consomme 0 gC0 2 e Note A+ (échelle SWDM v4) Cela correspond à : 0.00 Pas de données 0.00 Pas de données 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter"
+ },
+ "truth2": {
+  "bytes": 1557,
+  "requests": 2,
+  "cached": 1
+ },
+ "state2": {
+  "v2": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Paris_%2875004%29_Quai_aux_Fleurs.jpg",
+   "requests": 2,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.08,
+   "rating": null,
+   "intensity": 71
+  },
+  "v3": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Paris_%2875004%29_Quai_aux_Fleurs.jpg",
+   "requests": 2,
+   "transferred": 0,
+   "measured": 2,
+   "gco2e": 0,
+   "rating": "A+",
+   "intensity": 44.18
+  },
+  "v2After": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Paris_%2875004%29_Quai_aux_Fleurs.jpg",
+   "requests": 2,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 0.08,
+   "rating": null,
+   "intensity": 71
+  }
+ }
+}

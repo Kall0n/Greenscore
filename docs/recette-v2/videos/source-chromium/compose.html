@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>GreenScore avant / après (Chromium)</title>
+<style>
+  :root { --bg: #eef1ea; --ink: #1d2b1f; --muted: #5d6b60; --v2: #8a6d5a; --v3: #2f6f3e; --dark: #1d2b1f; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+  .layer { position: absolute; inset: 0; }
+  /* Partie A : l'onglet Chromium */
+  .top { position: absolute; left: 0; right: 0; top: 0; height: 52px; background: var(--dark); color: #fff;
+    display: flex; align-items: center; gap: 14px; padding: 0 28px; font-size: 20px; font-weight: 700; }
+  .top .step { color: #b9e28c; font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+  .top .right { margin-left: auto; font-size: 14px; font-weight: 500; color: #c9d3c6; }
+  .chrome { position: absolute; left: 64px; top: 70px; width: 1152px; height: 34px; background: #dfe3dc;
+    border-radius: 10px 10px 0 0; display: flex; align-items: center; gap: 10px; padding: 0 14px; }
+  .chrome .dots { display: flex; gap: 6px; } .chrome .dots i { width: 10px; height: 10px; border-radius: 50%; background: #b8beb4; display: block; }
+  .chrome .url { flex: 1; background: #fff; border-radius: 999px; height: 24px; display: flex; align-items: center; padding: 0 12px;
+    font-size: 13px; color: #333; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .chrome .ext { display: flex; gap: 6px; align-items: center; font-size: 11px; color: var(--muted); }
+  .chrome .ext img { width: 18px; height: 18px; border-radius: 4px; }
+  canvas#page { position: absolute; left: 64px; top: 104px; width: 1152px; height: 584px; background: #fff; border-radius: 0 0 10px 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.12); }
+  .counter { position: absolute; right: 84px; bottom: 50px; background: rgba(29,43,31,.92); color: #fff; border-radius: 12px;
+    padding: 12px 18px; font-size: 18px; font-variant-numeric: tabular-nums; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+  .counter small { display: block; font-size: 12px; color: #b9e28c; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px; }
+  .speed { position: absolute; left: 84px; bottom: 50px; background: rgba(255,255,255,.92); border-radius: 999px; padding: 6px 14px;
+    font-size: 13px; color: var(--muted); }
+  .spa { position: absolute; left: 84px; bottom: 92px; background: rgba(255,255,255,.95); border-radius: 10px; padding: 8px 14px; font-size: 14px; }
+  /* Partie B : les popups */
+  .col { position: absolute; top: 74px; width: 374px; text-align: center; }
+  .col.v2 { left: 76px; } .col.v3 { right: 76px; }
+  .col .label { font-size: 15px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+  .col.v2 .label { color: var(--v2); } .col.v3 .label { color: var(--v3); }
+  .col .ver { font-size: 13px; color: var(--muted); margin: 2px 0 10px; }
+  .col img { width: 374px; height: 429px; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.18); background: #fff; display: block; }
+  .col .count { margin-top: 12px; font-size: 16px; line-height: 1.35; }
+  .center { position: absolute; left: 470px; width: 340px; top: 150px; text-align: center; }
+  .reality { background: #fff; border-radius: 16px; padding: 20px 18px; box-shadow: 0 8px 22px rgba(0,0,0,.08); }
+  .reality small { display: block; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .reality b { display: block; font-size: 34px; font-variant-numeric: tabular-nums; }
+  .reality span { font-size: 15px; color: var(--muted); }
+  .pages { margin-top: 14px; background: #fff; border-radius: 12px; padding: 10px 14px; text-align: left; font-size: 13px; line-height: 1.5; }
+  .pages b { font-variant-numeric: tabular-nums; }
+  .verdict { position: absolute; left: 64px; right: 64px; bottom: 22px; background: var(--dark); color: #fff; border-radius: 14px;
+    padding: 13px 22px; font-size: 21px; font-weight: 700; line-height: 1.3; }
+  .verdict em { font-style: normal; color: #b9e28c; }
+  .fade { opacity: 0; }
+  .col .pct { display: inline-block; margin-top: 4px; font-size: 14px; font-weight: 800; border-radius: 999px; padding: 2px 10px; color: #fff; }
+  /* Partie C : le détail */
+  .prec { position: absolute; left: 64px; right: 64px; top: 70px; background: #fff; border-radius: 14px; padding: 14px 20px; box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+  .ptitle { font-size: 16px; font-weight: 800; margin-bottom: 8px; } .ptitle span { font-weight: 400; color: var(--muted); font-size: 14px; }
+  .pbar { display: grid; grid-template-columns: 130px 1fr 70px; align-items: center; gap: 12px; margin: 5px 0; font-size: 15px; }
+  .pbar .who.v2 { color: var(--v2); font-weight: 700; } .pbar .who.v3 { color: var(--v3); font-weight: 700; }
+  .pbar .track { height: 18px; background: #eef1ea; border-radius: 9px; overflow: hidden; position: relative; }
+  .pbar .track::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 2px; background: #1d2b1f55; }
+  .pbar .fill { height: 100%; border-radius: 9px; width: 0; } .fill.v2 { background: #c0262d; } .fill.v3 { background: #2e9e4f; }
+  .pbar b { text-align: right; font-size: 18px; font-variant-numeric: tabular-nums; }
+  table.det { position: absolute; left: 64px; right: 64px; top: 196px; border-collapse: separate; border-spacing: 0; font-size: 14.5px;
+    background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+  table.det th { text-align: left; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 9px 14px; background: #f6f8f3; }
+  table.det th.v2 { color: var(--v2); } table.det th.v3 { color: var(--v3); }
+  table.det td { padding: 7px 14px; border-top: 1px solid #e6eae2; vertical-align: top; line-height: 1.3; }
+  table.det td:first-child { font-weight: 700; width: 150px; }
+  table.det td.bad { color: #a3262c; } table.det td.good { color: #24683a; }
+  table.det td small { color: var(--muted); font-size: 12.5px; }
+  .fixes { position: absolute; left: 64px; right: 64px; bottom: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px;
+    background: var(--dark); color: #fff; border-radius: 14px; padding: 12px 20px; font-size: 13.5px; line-height: 1.35; }
+  .fixes .h { grid-column: 1 / -1; color: #b9e28c; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  .fixes div::before { content: "✓ "; color: #b9e28c; font-weight: 800; }
+  .fixes .h::before { content: ""; }
+</style>
+</head>
+<body>
+<div class="layer" id="partA">
+  <div class="top"><span class="step">1 · Dans Chromium</span><span id="titleA"></span><span class="right" id="extA"></span></div>
+  <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="url"></span>
+    <span class="ext"><img src="icon-v2.png" alt="">1.6.2 <img src="icon-v3.png" alt="">1.7.0</span></div>
+  <canvas id="page" width="1280" height="649"></canvas>
+  <div class="speed" id="speed"></div>
+  <div class="spa fade" id="spa"></div>
+  <div class="counter"><small>Reçu par Chromium (réseau)</small><span id="counter">0 Ko · 0 requête</span></div>
+</div>
+<div class="layer fade" id="partB">
+  <div class="top"><span class="step">2 · Les deux popups</span><span id="titleB"></span><span class="right">Extensions installées ensemble, même onglet, même chargement</span></div>
+  <div class="col v2" id="colV2"><div class="label">Avant</div><div class="ver">GreenScore 1.6.2 · Chrome Web Store</div>
+    <img id="popV2" alt=""><div class="count" id="countV2"></div></div>
+  <div class="center" id="center"><div class="reality"><small>Réalité mesurée par Chromium</small><b id="realBytes"></b><span id="realReq"></span></div>
+    <div class="pages fade" id="pages"></div></div>
+  <div class="col v3" id="colV3"><div class="label">Après</div><div class="ver">GreenScore 1.7.0 · mesure réelle + SWDM v4</div>
+    <img id="popV3" alt=""><div class="count" id="countV3"></div></div>
+  <div class="verdict fade" id="verdict"></div>
+</div>
+<div class="layer fade" id="partC">
+  <div class="top"><span class="step">3 · Le détail</span><span id="titleC"></span><span class="right">Ce qui change entre les deux versions</span></div>
+  <div class="prec" id="prec">
+    <div class="ptitle">Précision du poids mesuré <span>(octets comptés ÷ octets reçus par Chromium)</span></div>
+    <div class="pbar"><span class="who v2">Avant · 1.6.2</span><div class="track"><div class="fill v2" id="barV2"></div></div><b id="pctV2"></b></div>
+    <div class="pbar"><span class="who v3">Après · 1.7.0</span><div class="track"><div class="fill v3" id="barV3"></div></div><b id="pctV3"></b></div>
+  </div>
+  <table class="det" id="det"></table>
+  <div class="fixes" id="fixes"></div>
+</div>
+<script>
+const fmtBytes = (b) => b >= 1e6 ? `${(b / 1e6).toLocaleString("fr-FR", { maximumFractionDigits: 2 })} Mo`
+  : `${Math.round(b / 1e3).toLocaleString("fr-FR")} Ko`;
+const fmtBytesFine = (b) => b < 10000 ? `${(b / 1e3).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Ko` : fmtBytes(b);
+const plural = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+const ease = (x) => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
+
+let D, IMGS = [], A_END, PLAY, SPEED, C_START, B2_START, P2 = 0, P3 = 0;
+const pctText = (p) => `${Math.round(p * 100)} %`;
+const ctx = document.getElementById("page").getContext("2d");
+
+window.setup = async (data, verdictHtml, pagesHtml, detail) => {
+  D = data;
+  // Partie A : on retire les images d'about:blank et on accélère jusqu'à ~10 s
+  const first = D.frames.findIndex((f) => f.requests > 0);
+  D.frames = D.frames.slice(Math.max(0, first));
+  const t0 = D.frames[0].t;
+  D.frames.forEach((f) => (f.t -= t0));
+  const real = D.frames.at(-1).t + 0.5;
+  PLAY = Math.min(10, Math.max(5, real));
+  SPEED = real / PLAY;
+  A_END = PLAY + 0.6;
+  B2_START = D.truth2 ? A_END + 9.5 : null;
+  C_START = B2_START ? B2_START + 9 : A_END + 9.5;
+  window.DURATION = C_START + 12;
+  await Promise.all(D.frames.map((f, i) => new Promise((res) => {
+    const im = new Image(); im.onload = res; im.onerror = res; im.src = `out/${D.id}/frames/${f.file}`; IMGS[i] = im;
+  })));
+  await Promise.all(["popV2", "popV3"].map((id) => new Promise((res) => {
+    const im = document.getElementById(id); im.onload = res; im.onerror = res;
+    im.src = `out/${D.id}/popup-${id === "popV2" ? "v2" : "v3"}.png`;
+  })));
+  document.getElementById("titleA").textContent = D.title;
+  document.getElementById("titleB").textContent = D.title;
+  document.getElementById("extA").textContent = `Chromium ${D.chromium.replace(/^[^/]*\//, "")} · cache vidé`;
+  document.getElementById("speed").textContent = SPEED > 1.2 ? `Accéléré ×${SPEED.toFixed(1).replace(".", ",")}` : "Vitesse réelle";
+  document.getElementById("realBytes").textContent = fmtBytesFine(D.truth.bytes);
+  document.getElementById("realReq").textContent = `${plural(D.truth.requests, "requête")} · en-têtes compris`;
+  const s2 = D.state.v2After || D.state.v2, s3 = D.state.v3;
+  const closed = D.state.v3Closed || [];
+  const v3Bytes = closed.reduce((a, p) => a + p.bytes, 0) + s3.transferred;
+  P2 = s2.transferred / D.truth.bytes;
+  P3 = v3Bytes / D.truth.bytes;
+  const badge = (p, ok) => `<span class="pct" style="background:${ok ? "#2e9e4f" : "#c0262d"}">${pctText(p)} de la réalité</span>`;
+  document.getElementById("countV2").innerHTML =
+    `Octets comptés : <b>${fmtBytesFine(s2.transferred)}</b> sur ${plural(s2.requests, "requête")}<br>${badge(P2, false)}`;
+  document.getElementById("countV3").innerHTML = closed.length
+    ? `Octets comptés : <b>${fmtBytesFine(v3Bytes)}</b> sur ${closed.length + 1} pages vues<br>${badge(P3, true)}`
+    : `Octets comptés : <b>${fmtBytesFine(s3.transferred)}</b> · ${s3.measured} / ${s3.requests} req. mesurées<br>${badge(P3, true)}`;
+  // Partie B2 : 2e visite avec le cache (copie de la partie B)
+  if (D.truth2) {
+    const b2 = document.getElementById("partB").cloneNode(true);
+    b2.id = "partB2";
+    b2.querySelectorAll("[id]").forEach((e) => (e.id += "2"));
+    document.body.insertBefore(b2, document.getElementById("partC"));
+    b2.querySelector(".step").textContent = "2 bis · 2e visite";
+    b2.querySelector(".right").textContent = "Même page rechargée, cache du navigateur conservé";
+    await Promise.all([["popV22", "v2"], ["popV32", "v3"]].map(([id, k]) => new Promise((res) => {
+      const im = document.getElementById(id); im.onload = res; im.onerror = res;
+      im.src = `out/${D.id}/popup-${k}-cache.png`;
+    })));
+    const t2 = D.truth2, c2 = D.state2.v2After || D.state2.v2, c3 = D.state2.v3;
+    document.getElementById("realBytes2").textContent = fmtBytesFine(t2.bytes);
+    document.getElementById("realReq2").textContent = `${plural(t2.requests, "requête")} · ${t2.cached} servies par le cache`;
+    document.getElementById("countV22").innerHTML =
+      `Octets comptés : <b>${fmtBytesFine(c2.transferred)}</b> sur ${plural(c2.requests, "requête")}<br><span class="pct" style="background:#c0262d">cache ignoré : tout est recompté</span>`;
+    document.getElementById("countV32").innerHTML =
+      `Octets comptés : <b>${fmtBytesFine(c3.transferred)}</b> · ${c3.measured} / ${c3.requests} req. mesurées<br><span class="pct" style="background:#2e9e4f">cache compté à 0 octet</span>`;
+    document.getElementById("verdict2").innerHTML = detail.verdict2;
+    document.getElementById("pages2").style.display = "none";
+  }
+  // Partie C
+  document.getElementById("titleC").textContent = D.title;
+  document.getElementById("pctV2").textContent = pctText(P2);
+  document.getElementById("pctV3").textContent = pctText(P3);
+  const det = document.getElementById("det");
+  det.innerHTML = `<tr><th></th><th>Réalité (Chromium)</th><th class="v2">Avant · 1.6.2</th><th class="v3">Après · 1.7.0</th></tr>` +
+    detail.rows.map(([k, r, a, b]) => `<tr><td>${k}</td><td>${r}</td><td class="bad">${a}</td><td class="good">${b}</td></tr>`).join("");
+  document.getElementById("fixes").innerHTML = `<div class="h">Ce qui a été corrigé dans le plugin</div>` + detail.fixes.map((f) => `<div>${f}</div>`).join("");
+  document.getElementById("verdict").innerHTML = verdictHtml;
+  const pg = document.getElementById("pages");
+  if (pagesHtml) { pg.innerHTML = pagesHtml; } else { pg.style.display = "none"; }
+  if (D.spaPages.length > 1) document.getElementById("spa").dataset.show = "1";
+};
+
+function frameAt(realT) {
+  let i = 0;
+  while (i + 1 < D.frames.length && D.frames[i + 1].t <= realT) i++;
+  return i;
+}
+
+window.renderFrame = (t) => {
+  // Partie A
+  const realT = Math.min(t, PLAY) * SPEED;
+  const i = frameAt(realT);
+  const im = IMGS[i];
+  if (im && im.naturalWidth) ctx.drawImage(im, 0, 0, 1280, 649, 0, 0, 1280, 649);
+  // Zones masquées (ex. ville de livraison déduite de l'adresse IP)
+  for (const m of D.mask || []) {
+    ctx.fillStyle = "#1d2b1f"; ctx.fillRect(m.x, m.y, m.w, m.h);
+    ctx.fillStyle = "#ffffff"; ctx.font = "600 14px Segoe UI, Arial"; ctx.fillText("zone masquée", m.x + 12, m.y + m.h / 2 + 5);
+  }
+  const f = D.frames[i];
+  document.getElementById("counter").textContent = `${fmtBytesFine(f.bytes)} · ${plural(f.requests, "requête")}`;
+  document.getElementById("url").textContent = D.spaPages.length > 1 ? new URL(D.url).origin + "/docs/svelte/…" : D.url;
+  if (D.spaPages.length > 1) {
+    const spa = document.getElementById("spa");
+    spa.style.opacity = 1;
+    spa.textContent = `Navigation sans rechargement : ${D.spaPages.length} pages (${D.spaPages.map((p) => p.split(" •")[0]).join(" → ")})`;
+  }
+  const a = 1 - ease((t - PLAY) / 0.6);
+  document.getElementById("partA").style.opacity = a;
+  // Partie B
+  const bEnd = B2_START ?? C_START;
+  const b = ease((t - PLAY) / 0.6) * (1 - ease((t - bEnd) / 0.6));
+  const partB = document.getElementById("partB");
+  partB.style.opacity = b;
+  if (B2_START) {
+    document.getElementById("partB2").style.opacity = ease((t - B2_START) / 0.6) * (1 - ease((t - C_START) / 0.6));
+  }
+  // Partie C
+  document.getElementById("partC").style.opacity = ease((t - C_START) / 0.6);
+  document.getElementById("barV2").style.width = `${Math.min(1, P2) * 100 * ease((t - C_START - 0.8) / 1.2)}%`;
+  document.getElementById("barV3").style.width = `${Math.min(1, P3) * 100 * ease((t - C_START - 1.4) / 1.2)}%`;
+  const show = (id, start, dy = 16) => {
+    const p = ease((t - start) / 0.5), el = document.getElementById(id);
+    el.style.opacity = p; el.style.transform = `translateY(${(1 - p) * dy}px)`;
+  };
+  show("colV2", A_END + 0.2);
+  show("center", A_END + 1.0);
+  show("colV3", A_END + 1.8);
+  show("pages", A_END + 2.6);
+  show("verdict", A_END + 3.8);
+  if (B2_START) {
+    show("colV22", B2_START + 0.2);
+    show("center2", B2_START + 1.0);
+    show("colV32", B2_START + 1.8);
+    show("verdict2", B2_START + 3.2);
+  }
+  show("det", C_START + 2.2);
+  show("fixes", C_START + 3.4);
+};
+</script>
+</body>
+</html>

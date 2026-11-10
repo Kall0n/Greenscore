@@ -1,0 +1,90 @@
+{
+ "id": "youtube",
+ "title": "YouTube : page d'accueil (sans compte)",
+ "url": "https://www.youtube.com/",
+ "recordedAt": "2026-11-10T11:49:45.244Z",
+ "consent": "Tout refuser",
+ "chromium": "Chrome/159.0.8153.0",
+ "versions": {
+  "v2": "1.6.2",
+  "v3": "1.7.0"
+ },
+ "truth": {
+  "bytes": 4167768,
+  "requests": 138
+ },
+ "loadSeconds": 34.441,
+ "spaPages": [
+  "YouTube"
+ ],
+ "state": {
+  "v2": {
+   "url": "https://www.youtube.com/",
+   "requests": 138,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 9.25,
+   "rating": null,
+   "intensity": 0
+  },
+  "v3": {
+   "url": "https://www.youtube.com/",
+   "requests": 139,
+   "transferred": 3655115,
+   "measured": 137,
+   "gco2e": 0.313152,
+   "rating": "E",
+   "intensity": 44.18
+  },
+  "v3Closed": [],
+  "v2After": {
+   "url": "https://www.youtube.com/",
+   "requests": 138,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.53,
+   "rating": null,
+   "intensity": 73
+  }
+ },
+ "popupText": {
+  "v2": "GreenScore Web Site actuel : youtube.com Dans votre pays (France), cette page consomme 1.53 gC0 2 e C'est 2.07x supérieur à la moyenne ! Cela correspond à : 7.7 recherches sur le web 3.1 emails envoyés 11.8 litres d'eau du robinet Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3": "GreenScore Web Site actuel : youtube.com Dans votre pays (France), cette page consomme 0.31 gC0 2 e Note E (échelle SWDM v4) Cela correspond à : 1.6 recherches sur le web 2.4 litres d'eau du robinet 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v2Cache": "GreenScore Web Site actuel : youtube.com Dans votre pays (France), cette page consomme 1.32 gC0 2 e C'est 1.78x supérieur à la moyenne ! Cela correspond à : 10.2 litres d'eau du robinet 2.6 emails envoyés 6.6 recherches sur le web Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter",
+  "v3Cache": "GreenScore Web Site actuel : youtube.com Dans votre pays (France), cette page consomme 0.22 gC0 2 e Note D (échelle SWDM v4) Cela correspond à : 1.1 recherches sur le web 1.7 litres d'eau du robinet 0.00 Pas de données Plus de détails Vous souhaitez enregistrer ce résultat ? Se connecter"
+ },
+ "truth2": {
+  "bytes": 3018450,
+  "requests": 135,
+  "cached": 115
+ },
+ "state2": {
+  "v2": {
+   "url": "https://www.youtube.com/",
+   "requests": 119,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.32,
+   "rating": null,
+   "intensity": 73
+  },
+  "v3": {
+   "url": "https://www.youtube.com/",
+   "requests": 119,
+   "transferred": 2531879,
+   "measured": 118,
+   "gco2e": 0.216919,
+   "rating": "D",
+   "intensity": 44.18
+  },
+  "v2After": {
+   "url": "https://www.youtube.com/",
+   "requests": 119,
+   "transferred": 0,
+   "measured": null,
+   "gco2e": 1.32,
+   "rating": null,
+   "intensity": 73
+  }
+ }
+}

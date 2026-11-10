@@ -146,6 +146,41 @@ Animations générées le 10/11/2026 à partir des **mesures de cette recette**.
 
 Sources : [`videos/source/`](videos/source/) (`scene.html` + `render.mjs`, rendu image par image avec Chromium puis encodage ffmpeg). Le plugin corrigé (1.7.0) a aussi été contrôlé en conditions réelles contre la vérité terrain réseau : [`bench/results/plugin-v2-corrige-chrome-2026-11-10.md`](../../bench/results/plugin-v2-corrige-chrome-2026-11-10.md).
 
+## Vidéos avant / après filmées dans Chromium
+
+Enregistrées les 10 et 11/11/2026 dans Chromium 159, **avec les deux extensions installées en même temps** : GreenScore 1.6.2 (Chrome Web Store, *avant*) et GreenScore 1.7.0 (`plugin/chrome`, *après*). Les deux observent exactement le même chargement. Profil neuf à chaque site ; bandeaux cookies **refusés** quand le bouton de refus est reconnu.
+
+Chaque vidéo (≈ 40 s) enchaîne quatre écrans :
+1. **l'onglet filmé** (CDP screencast) avec, en direct, ce que Chromium reçoit réellement par le réseau ;
+2. **1re visite** (cache vidé) : les vrais popups des deux extensions, les octets comptés par chacune et leur précision ;
+3. **2e visite** : la même page rechargée **avec le cache du navigateur** ;
+4. **le détail** : précision du poids mesuré, requêtes, intensité carbone, formule, résultat, 2e visite, écart restant et corrections.
+
+| Vidéo | Réalité (1re visite) | Avant · 1.6.2 | Après · 1.7.0 | 2e visite (cache) : réalité · v2 · v3 |
+|---|---|---|---|---|
+| [`image-14Mo`](videos/chromium-avant-apres-image-14Mo.mp4) ([GIF](videos/chromium-avant-apres-image-14Mo.gif)) | 14,04 Mo · 2 req. | 0 octet · **0,07 g** « 10,57x inférieur à la moyenne » | 14,03 Mo (100 %) · 1,20 g · **F** | 1,6 Ko · 0,08 g · **0 g** |
+| [`wikipedia`](videos/chromium-avant-apres-wikipedia.mp4) ([GIF](videos/chromium-avant-apres-wikipedia.gif)) | 706 Ko · 46 req. | 0 octet · 0,50 g | 643 Ko (91 %) · 0,055 g · **A** | 208 Ko · 0,23 g · 0,017 g |
+| [`application-monopage`](videos/chromium-avant-apres-application-monopage.mp4) ([GIF](videos/chromium-avant-apres-application-monopage.gif)) | 300 Ko · 52 req. · 5 pages | 0 octet · 0,58 g, tout cumulé sur la dernière page | 319 Ko (106 %) · 5 pages vues · 0,027 g | 37 Ko · 0,07 g · 0,0032 g |
+| [`example-com`](videos/chromium-avant-apres-example-com.mp4) ([GIF](videos/chromium-avant-apres-example-com.gif)) | 2,0 Ko · 2 req. | 0 octet · 0,01 g | 2,3 Ko · 0,0002 g · **A+** | 0,2 Ko · 0,01 g · **0 g** |
+| [`amazon`](videos/chromium-avant-apres-amazon.mp4) ([GIF](videos/chromium-avant-apres-amazon.gif)) | 3,44 Mo · 156 req. | 0 octet · 1,78 g | 2,69 Mo (78 %) · 0,23 g · **D** | 54 Ko · **1,31 g** · 0,0023 g |
+| [`airbnb`](videos/chromium-avant-apres-airbnb.mp4) ([GIF](videos/chromium-avant-apres-airbnb.gif)) | 4,60 Mo · 164 req. | 0 octet · 1,79 g | 4,48 Mo (97 %) · 0,38 g · **F** | 80 Ko · **1,66 g** · 0,0006 g |
+| [`youtube`](videos/chromium-avant-apres-youtube.mp4) ([GIF](videos/chromium-avant-apres-youtube.gif)) | 4,17 Mo · 138 req. | 0 octet · 1,53 g | 3,66 Mo (88 %) · 0,31 g · **E** | 3,02 Mo · 1,32 g · 0,22 g |
+
+**Ce que montrent ces vidéos :**
+- **La v2 ne lit jamais le poids transféré** (0 octet sur les 7 sites) : son résultat dépend surtout du nombre de requêtes. Une photo de 14 Mo (0,07 g) sort mieux notée qu'une page Wikipédia (0,50 g).
+- **La v2 ignore le cache** : au rechargement d'Amazon, Chromium ne reçoit que 54 Ko, mais la v2 affiche encore 1,31 g. La v3 suit la réalité (0,0023 g). YouTube retélécharge vraiment 3 Mo au rechargement (aperçus vidéo) : la v3 le voit aussi.
+- **Précision du poids mesuré par la v3** : de 78 % à 106 % des octets reçus par Chromium. L'écart vient des **en-têtes HTTP** (≈ 1 Ko par requête, invisibles pour une extension), de quelques requêtes d'**autres domaines qui n'annoncent pas leur taille** (Amazon, Airbnb, YouTube) et, dans l'autre sens, des **300 o d'en-têtes estimés** que Resource Timing ajoute à chaque ressource (Svelte, example.com).
+
+**À savoir :**
+- La v2 calcule avec l'intensité carbone *en direct* d'Electricity Maps (≈ 72-73 g/kWh pendant ces enregistrements) : ses grammes changent d'une heure à l'autre pour la même page.
+- Les équivalents « Pas de données » de la v3 ne viennent pas du plugin : le serveur de production ne renvoie aucun équivalent pour les valeurs inférieures à environ 1 g.
+- **Amazon** : la zone « Livraison à … » (ville déduite de l'adresse IP) est masquée dans la vidéo. Amazon charge d'abord une petite page de vérification (5 requêtes) : la v3 compte donc 2 pages vues. Son bandeau cookies n'a pas pu être refusé automatiquement ; il reste affiché.
+- Sites abandonnés : **Le Monde** (mur « accepter ou s'abonner », non accepté) et **Pinterest** (« Accès refusé » au navigateur automatisé, non contourné).
+- **Correctif fait pendant ces enregistrements** : dans une application monopage, le site télécharge les données de la page suivante *avant* de changer d'URL. La v3 les rangeait dans l'ancienne page puis les perdait (la doc Svelte affichait 0 g). Les requêtes lancées moins de 3 s avant le changement d'URL sont désormais rattachées à la nouvelle page (`startSpaPage`).
+- **Point à surveiller** : juste après un redémarrage du PC, sur un réseau très lent (71 s de chargement), deux enregistrements Wikipédia ont perdu le document HTML (−160 Ko). Non reproduit sur les 4 essais suivants ; à vérifier avec le banc de test du Sprint 2.
+
+Sources et mesures brutes : [`videos/source-chromium/`](videos/source-chromium/) (`record.mjs` enregistre, `compose.html` + `render-rec.mjs` montent ; `mesures/*.json` contient pour chaque site la vérité réseau des deux visites, l'état interne des deux extensions et le texte exact de leurs popups).
+
 ## Enregistrements d'écran de la v2
 
 > ⚠️ **Les fichiers vidéo ont été perdus** lors de la suppression du dossier du projet (novembre 2026). Les tableaux ci-dessus conservent toutes les mesures. Les vidéos sont **à réenregistrer** en rejouant les mêmes scénarios.
