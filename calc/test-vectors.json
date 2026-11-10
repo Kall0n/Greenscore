@@ -1,0 +1,341 @@
+{
+  "description": "Vecteurs de référence du modèle GreenScore v3 (SWDM v4), générés avec CO2.js. Ne pas modifier à la main : npm run generate:vectors.",
+  "model_version": "swdm4-ember-v1",
+  "generated_with": "@tgwf/co2@0.19.0",
+  "tolerance_gco2e": 1e-9,
+  "conventions": {
+    "bytes": "octets transférés, Go décimal (1e9)",
+    "country": "ISO 3166-1 alpha-2 ; null = moyenne mondiale (494 gCO2e/kWh)",
+    "grid": "fonctionnement réseau + terminal au pays ; data center et fabrication à 494 gCO2e/kWh"
+  },
+  "cases": [
+    {
+      "name": "0 octet",
+      "bytes": 0,
+      "country": "FR",
+      "expected": {
+        "gco2e": 0,
+        "rating": "A+",
+        "segments": null
+      }
+    },
+    {
+      "name": "1 octet, monde",
+      "bytes": 1,
+      "country": null,
+      "expected": {
+        "gco2e": 1.4820000000000002e-7,
+        "rating": "A+",
+        "segments": {
+          "operational": {
+            "dataCenter": 2.717e-8,
+            "network": 2.9146000000000002e-8,
+            "device": 3.9520000000000006e-8
+          },
+          "embodied": {
+            "dataCenter": 5.928e-9,
+            "network": 6.422e-9,
+            "device": 4.0014000000000003e-8
+          }
+        }
+      }
+    },
+    {
+      "name": "200 Ko, France",
+      "bytes": 200000,
+      "country": "FR",
+      "expected": {
+        "gco2e": 0.017135004000000002,
+        "rating": "A+",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.0054340000000000005,
+            "network": 0.000521324,
+            "device": 0.0007068800000000001
+          },
+          "embodied": {
+            "dataCenter": 0.0011856000000000002,
+            "network": 0.0012844,
+            "device": 0.008002800000000001
+          }
+        }
+      }
+    },
+    {
+      "name": "2 Mio, monde (exemple méthodologie §4)",
+      "bytes": 2097152,
+      "country": null,
+      "expected": {
+        "gco2e": 0.31079792640000004,
+        "rating": "E",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.05697961984,
+            "network": 0.061123592192000004,
+            "device": 0.08287944704000001
+          },
+          "embodied": {
+            "dataCenter": 0.012431917056,
+            "network": 0.013467910144,
+            "device": 0.08391544012800001
+          }
+        }
+      }
+    },
+    {
+      "name": "2 Mio, France (exemple méthodologie §4)",
+      "bytes": 2097152,
+      "country": "FR",
+      "expected": {
+        "gco2e": 0.17967353954304,
+        "rating": "C",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.05697961984,
+            "network": 0.0054664783462400005,
+            "device": 0.007412174028800001
+          },
+          "embodied": {
+            "dataCenter": 0.012431917056,
+            "network": 0.013467910144,
+            "device": 0.08391544012800001
+          }
+        }
+      }
+    },
+    {
+      "name": "2 Mio, Allemagne",
+      "bytes": 2097152,
+      "country": "DE",
+      "expected": {
+        "gco2e": 0.26650678919168,
+        "rating": "D",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.05697961984,
+            "network": 0.04232375697408,
+            "device": 0.057388145049600006
+          },
+          "embodied": {
+            "dataCenter": 0.012431917056,
+            "network": 0.013467910144,
+            "device": 0.08391544012800001
+          }
+        }
+      }
+    },
+    {
+      "name": "2 Mio, Pologne",
+      "bytes": 2097152,
+      "country": "PL",
+      "expected": {
+        "gco2e": 0.34606409580544006,
+        "rating": "E",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.05697961984,
+            "network": 0.07609268568064001,
+            "device": 0.10317652295680001
+          },
+          "embodied": {
+            "dataCenter": 0.012431917056,
+            "network": 0.013467910144,
+            "device": 0.08391544012800001
+          }
+        }
+      }
+    },
+    {
+      "name": "2 Mio, États-Unis",
+      "bytes": 2097152,
+      "country": "US",
+      "expected": {
+        "gco2e": 0.27860129546240003,
+        "rating": "E",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.05697961984,
+            "network": 0.0474573963264,
+            "device": 0.06434901196800001
+          },
+          "embodied": {
+            "dataCenter": 0.012431917056,
+            "network": 0.013467910144,
+            "device": 0.08391544012800001
+          }
+        }
+      }
+    },
+    {
+      "name": "2 Mio, Royaume-Uni",
+      "bytes": 2097152,
+      "country": "GB",
+      "expected": {
+        "gco2e": 0.22969856294912,
+        "rating": "D",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.05697961984,
+            "network": 0.026700121374720002,
+            "device": 0.0362035544064
+          },
+          "embodied": {
+            "dataCenter": 0.012431917056,
+            "network": 0.013467910144,
+            "device": 0.08391544012800001
+          }
+        }
+      }
+    },
+    {
+      "name": "10 Mo, France",
+      "bytes": 10000000,
+      "country": "FR",
+      "expected": {
+        "gco2e": 0.8567502,
+        "rating": "F",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.2717,
+            "network": 0.0260662,
+            "device": 0.035344
+          },
+          "embodied": {
+            "dataCenter": 0.05928,
+            "network": 0.06422,
+            "device": 0.40014000000000005
+          }
+        }
+      }
+    },
+    {
+      "name": "1 Go, monde",
+      "bytes": 1000000000,
+      "country": null,
+      "expected": {
+        "gco2e": 148.2,
+        "rating": "F",
+        "segments": {
+          "operational": {
+            "dataCenter": 27.17,
+            "network": 29.145999999999997,
+            "device": 39.52
+          },
+          "embodied": {
+            "dataCenter": 5.928,
+            "network": 6.422,
+            "device": 40.014
+          }
+        }
+      }
+    },
+    {
+      "name": "5 Mo, code pays en minuscules",
+      "bytes": 5000000,
+      "country": "fr",
+      "expected": {
+        "gco2e": 0.4283751,
+        "rating": "F",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.13585,
+            "network": 0.0130331,
+            "device": 0.017672
+          },
+          "embodied": {
+            "dataCenter": 0.02964,
+            "network": 0.03211,
+            "device": 0.20007000000000003
+          }
+        }
+      }
+    },
+    {
+      "name": "5 Mo, pays inconnu → moyenne mondiale",
+      "bytes": 5000000,
+      "country": "XX",
+      "expected": {
+        "gco2e": 0.7410000000000001,
+        "rating": "F",
+        "segments": {
+          "operational": {
+            "dataCenter": 0.13585,
+            "network": 0.14573,
+            "device": 0.1976
+          },
+          "embodied": {
+            "dataCenter": 0.02964,
+            "network": 0.03211,
+            "device": 0.20007000000000003
+          }
+        }
+      }
+    }
+  ],
+  "rating_cases": [
+    {
+      "gco2e": 0,
+      "expected": "A+"
+    },
+    {
+      "gco2e": 0.02,
+      "expected": "A+"
+    },
+    {
+      "gco2e": 0.04,
+      "expected": "A+"
+    },
+    {
+      "gco2e": 0.0400001,
+      "expected": "A"
+    },
+    {
+      "gco2e": 0.079,
+      "expected": "A"
+    },
+    {
+      "gco2e": 0.0790001,
+      "expected": "B"
+    },
+    {
+      "gco2e": 0.145,
+      "expected": "B"
+    },
+    {
+      "gco2e": 0.1450001,
+      "expected": "C"
+    },
+    {
+      "gco2e": 0.209,
+      "expected": "C"
+    },
+    {
+      "gco2e": 0.2090001,
+      "expected": "D"
+    },
+    {
+      "gco2e": 0.278,
+      "expected": "D"
+    },
+    {
+      "gco2e": 0.2780001,
+      "expected": "E"
+    },
+    {
+      "gco2e": 0.359,
+      "expected": "E"
+    },
+    {
+      "gco2e": 0.3590001,
+      "expected": "F"
+    },
+    {
+      "gco2e": 1,
+      "expected": "F"
+    },
+    {
+      "gco2e": 100,
+      "expected": "F"
+    }
+  ]
+}

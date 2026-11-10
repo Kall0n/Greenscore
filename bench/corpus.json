@@ -1,0 +1,48 @@
+{
+  "description": "Corpus de référence du banc de test de précision (CDCT §12.1). Modèle : URL à choisir, vérifier et figer au Sprint 2.",
+  "version": 0,
+  "frozen_at": null,
+  "categories": {
+    "sobre": "Pages principalement textuelles, peu de ressources",
+    "moyenne": "Presse, e-commerce, sites institutionnels",
+    "lourde": "Vidéo, applications monopages, nombreuses ressources tierces"
+  },
+  "demo_page": {
+    "description": "Page contrôlée par l'équipe, en deux versions (objectif O5)",
+    "before_url": null,
+    "after_url": null,
+    "notes": "v-avant : images non optimisées, scripts lourds ; v-après : images compressées, chargement différé"
+  },
+  "pages": [
+    { "id": "S01", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S02", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S03", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S04", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S05", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S06", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S07", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S08", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S09", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "S10", "category": "sobre", "url": null, "spa": false, "notes": "" },
+    { "id": "M01", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M02", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M03", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M04", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M05", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M06", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M07", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M08", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M09", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "M10", "category": "moyenne", "url": null, "spa": false, "notes": "" },
+    { "id": "L01", "category": "lourde", "url": null, "spa": true, "notes": "" },
+    { "id": "L02", "category": "lourde", "url": null, "spa": true, "notes": "" },
+    { "id": "L03", "category": "lourde", "url": null, "spa": true, "notes": "" },
+    { "id": "L04", "category": "lourde", "url": null, "spa": false, "notes": "" },
+    { "id": "L05", "category": "lourde", "url": null, "spa": false, "notes": "" },
+    { "id": "L06", "category": "lourde", "url": null, "spa": false, "notes": "" },
+    { "id": "L07", "category": "lourde", "url": null, "spa": false, "notes": "" },
+    { "id": "L08", "category": "lourde", "url": null, "spa": false, "notes": "" },
+    { "id": "L09", "category": "lourde", "url": null, "spa": false, "notes": "" },
+    { "id": "L10", "category": "lourde", "url": null, "spa": false, "notes": "" }
+  ]
+}

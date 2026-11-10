@@ -1,0 +1,44 @@
+name: Module de calcul
+
+on:
+  pull_request:
+    paths:
+      - "calc/**"
+      - ".github/workflows/calc.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "calc/**"
+      - ".github/workflows/calc.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests et vecteurs de référence
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./calc
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: calc/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Vérifier que les fichiers générés sont à jour
+        run: |
+          npm run -s generate:intensity
+          npm run -s generate:vectors
+          git diff --exit-code -- grid-intensity.json src/grid-intensity.data.js test-vectors.json
+
+      - name: Tests
+        run: npm test

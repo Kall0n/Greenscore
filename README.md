@@ -1,82 +1,59 @@
 # GreenScore Web
 
-## Prérequis
-- **Rust**
-- **Node**
-- **Firefox**
+> 🇫🇷 Mesurez l'impact de votre activité sur le web. · 🇬🇧 Measure the impact of your web browsing.
+
+GreenScore Web est un **plugin de navigateur** (Firefox, Chrome) et une **application web**. Ils estiment l'empreinte carbone des pages et des sessions de navigation, la rendent compréhensible (note, équivalents concrets), et permettent à des membres et à des organisations de la suivre dans le temps, dans le respect de la vie privée.
+
+Projet de BUT Informatique 3ᵉ année (SAÉ S5.01 & S6.01), IUT de Bayonne et du Pays Basque, 2026-2027. Groupe 2 : PIETRERA-FERRANDINI Jeanne, PINSOLLE Romain, RIOUX Baptiste, ROCHE--RODRIGUEZ Killian. Commanditaire : Philippe ROOSE.
+
+## État du dépôt
+
+🚧 **Début du Sprint 2.** Le dépôt contient :
+- la documentation de conception ;
+- le **module de calcul v3**, implémenté et testé ;
+- le squelette du banc de test de précision ;
+- le **code de la version 2025-2026** (plugin, API Rust, application SvelteKit), point de départ de la v3.
+
+Le code 2025-2026 provient du commit `39e3a99` (16/04/2026) de [GreenScorePlugin-Rust-Svelte](https://github.com/green-score-plugin/GreenScorePlugin-Rust-Svelte). Il a été importé **sans son historique**, et nettoyé (voir [CDCT §14](docs/CDCT.md#14-publication-open-source)) :
+- la clé d'API Electricity Maps (S-02) a été retirée des deux plugins. **Elle reste visible dans l'historique du dépôt d'origine et doit être révoquée** ;
+- l'export de base `db/greenscoreweb_database.sql`, qui contenait des comptes réels (S-03), n'a pas été repris. Le schéma et les données de test fictives sont dans `backend/migrations/`.
+
+L'accord des auteurs précédents sur la licence reste à obtenir avant toute publication sous licence libre.
+
+| Dossier | Contenu | État |
+|---|---|---|
+| [`backend/`](backend/) | API Rust (Axum, SQLx, MySQL) | Code v2 importé, à corriger (CDCT §2) |
+| [`frontend/`](frontend/) | Application web SvelteKit | Code v2 importé |
+| [`plugin/`](plugin/) | Extensions Firefox et Chrome (deux copies, à unifier : ADR-0003) | Code v2 importé, à corriger |
+| [`calc/`](calc/) | Module de calcul partagé : SWDM v4, intensité par pays (Ember), note A+–F | ✅ 45 tests, écart nul avec CO2.js (`cd calc && npm ci && npm test`) |
+| [`bench/`](bench/) | Banc de test de précision (avant / après) : protocole et modèle de corpus | 🚧 Corpus et scripts à écrire au Sprint 2 |
+| [`docs/`](docs/) | CDCF, CDCT, méthodologie, ADR | ✅ Version de cadrage |
+
+## Documentation
+
+| Document | Contenu |
+|---|---|
+| [Cahier des charges fonctionnel (CDCF)](docs/CDCF.md) | Analyse du besoin, objectifs mesurables avant / après, exigences, anonymisation, dimensionnement, stratégie de preuve |
+| [Cahier des charges technique (CDCT)](docs/CDCT.md) | Audit du code existant, architecture, plugin, données, API, sécurité, tests, déploiement |
+| [Méthodologie de calcul](docs/methodologie-calcul.md) | Formules, constantes et sources de l'estimation de l'empreinte carbone (modèle v2 hérité et modèle v3) |
+| [Décisions d'architecture (ADR)](docs/adr/) | Décisions tracées et leur justification |
+| [Module de calcul](calc/README.md) | Utilisation, fichiers générés, tests et limites connues du module `calc/` |
+| [Banc de test](bench/README.md) | Protocole de mesure de la précision (objectifs O1 à O5) |
+
+## Historique du projet
+
+| Année | Dépôt |
+|---|---|
+| 2024-2025 | https://github.com/GreenScoreWebPlugin/GreenScorePlugin |
+| 2025-2026 | https://github.com/green-score-plugin/GreenScorePlugin-Rust-Svelte |
+| 2026-2027 | Ce dépôt |
+
+## Licence
+
+**À définir** (décision en cours avec le commanditaire et les auteurs des versions précédentes). Tant qu'aucune licence n'est publiée, aucune réutilisation n'est autorisée par défaut.
+
 ---
 
-## Installation et mise en route
+### English summary
 
-### 1. Cloner le projet
-Clonez le projet depuis le dépôt GitHub :
-```bash
-git clone https://github.com/green-score-plugin/GreenScorePlugin-Rust-Svelte
-```
-
-### 2. Configurer le site web
-Accédez à la racine du projet puis au dossier **GreenScorePlugin-Rust-Svelte** :
-```bash
-cd frontend
-cd backend
-```
-
-#### Ajouter les .env
-Pour que le projet fonctionne en local, il vous faut les identifiants de la base de données dans deux fichier .env
-
-- Front-end du site : [.env](BACKEND_URL=http://127.0.0.1:3000), que vous devrez mettre à la racine du dossier 'GreenScorePlugin-Rust-Svelte/frontend'
-- Backend du site : [.env]("BACKEND_URL=127.0.0.1:3000"), que vous devrez mettre à la racine du dossier 'GreenScorePlugin-Rust-Svelte/backend'
-
-Pensez a correctement les renommer '.env' et à changer les valeurs dans les .env pour qu'ils fonctionnent correctement avec votre base de données : DATABASE_URL= .
-Pour que la récupération de l'empreinte carbone fonctionne, pensez à créer une clé API ElectricityMap et l'ajouter correctement dans le .env du front-end : ELECTRICITY_MAP_API_KEY: .
-
-#### Modifier les adresses du plugin
-Pour que le plugin puisse fonctionner correctement, il vous faut paramétrer le fichier [config.js](./Plugin/src/config.js) pour permettre au plugin une connexion vers son backend, ainsi que l'accès au site et l'API.
-
-#### Base de données
-Pour que la base de données puisse fonctionner, il vous faut utiliser le .sql suivant :
-
-[greenscore.sql](./db/greenscoreweb_database.sql)
-
-#### Installer les dépendances du front-end
-Dans le dossier front-end :
-```bash
-npm install
-```
-
-#### Installer les dépendances back-end
-Installez les dépendances front-end nécessaires avec npm :
-```bash
-cargo install sqlx-cli
-cargo sqlx prepare
-```
-
-#### Démarrer le serveur Rust
-Lancez le serveur local Rust :
-```bash
-cargo run
-```
-
-#### Démarrer le serveur SvelteKit
-```bash
-npm run dev
-```
-
-Laissez ces terminalaux ouvert.
-
-
-### 4. Configurer le plugin dans Firefox
-1. Ouvrez **Firefox**.
-2. Cliquez sur l’icône en forme de puzzle en haut à droite.
-3. Cliquez sur **Gérer les extensions.**
-4. Cliquez sur la roue dentée pour accéder à **Gestion de vos extensions**.
-5. Sélectionnez **Déboguer les modules**.
-6. Cliquez sur **Charger un module complémentaire temporaire...**.
-7. Accédez au dossier `Plugin` à la racine du projet.
-8. Sélectionnez le fichier `manifest.json` et cliquez sur **Ouvrir**.
-
-### 6. Tester le plugin
-Le plugin est maintenant actif !
-
-1. Rendez-vous sur [amazon.fr](https://www.amazon.fr) avec Firefox.
-2. Testez les fonctionnalités du plugin.
+GreenScore Web is a browser extension and web application that estimates the carbon footprint of web pages and multi-page browsing sessions. It uses the public **Sustainable Web Design Model v4** (via CO2.js), with privacy by design (no full URLs, pseudonymised daily aggregates, k-anonymous open data). Design documents are currently in French; English versions will follow before the open source release.
