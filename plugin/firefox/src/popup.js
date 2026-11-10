@@ -1,6 +1,36 @@
 let gCO2eValue;
+let gRating;
+let gCoverage;
 let currentLang = 'fr';
 let translations = {};
+
+// Affiche les grammes sans écraser les pages sobres à « 0.00 » (constat A-10).
+function formatGrams(gCO2e) {
+  const value = Number(gCO2e) || 0;
+  if (value === 0) return "0";
+  if (value >= 0.1) return value.toFixed(2);
+  return String(Number(value.toPrecision(2)));
+}
+
+// Remplace l'ancienne comparaison à une « moyenne » de 0,74 g (calibrée sur le modèle v2)
+// par la note officielle SWDM v4 et le taux de requêtes dont la taille a été mesurée.
+function updateRating() {
+  const avgElem = document.getElementById("average-consumption");
+  const line = avgElem?.parentElement;
+  if (!line || !gRating) return;
+  const fr = currentLang === 'fr';
+  let text = fr ? `Note ${gRating} (échelle SWDM v4)` : `Rating ${gRating} (SWDM v4 scale)`;
+  if (typeof gCoverage === "number" && gCoverage < 0.9) {
+    const pct = Math.round(gCoverage * 100);
+    text += fr ? ` · ${pct} % des requêtes mesurées` : ` · ${pct}% of requests measured`;
+  }
+  // Le texte est réécrit, l'élément « average-consumption » est conservé pour les rappels.
+  line.textContent = "";
+  const span = document.createElement("span");
+  span.id = "average-consumption";
+  span.textContent = text;
+  line.appendChild(span);
+}
 
 async function loadTranslations(lang) {
   try {
@@ -167,22 +197,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   if (!isLocalhost) {
+    // Couleurs alignées sur les notes SWDM v4 : A+/A vert, B/C jaune, D/E orange, F rouge.
     function getColorClass(gCO2e) {
       const value = Number(gCO2e);
 
-      if (value <= 0.3) {
+      if (value <= 0.079) {
         return {
           text: "text-[#617D3B]",
           bg: "bg-[#ECFDF2]",
           border: "border-[#6D874B]",
         };
-      } else if (value <= 0.7) {
+      } else if (value <= 0.209) {
         return {
           text: "text-[#EAC13A]",
           bg: "bg-[#FFF1C5]",
           border: "border-[#EAC13A]",
         };
-      } else if (value <= 1) {
+      } else if (value <= 0.359) {
         return {
           text: "text-[#E98035]",
           bg: "bg-[#F9D2B6]",
@@ -214,24 +245,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    function updateAverageConsumption(gCO2e) {
-      const AVERAGE_CONSUMPTION = 0.74;
-
-      if (gCO2e <= 0) {
-        document.getElementById("average-consumption").textContent = t("negligible");
-        return;
-      }
-
-      let multiplier = gCO2e / AVERAGE_CONSUMPTION;
-
-      if (multiplier > 1) {
-        document.getElementById(
-          "average-consumption"
-        ).textContent = t("higher", { mult: multiplier.toFixed(2) });
-      } else {
-        document.getElementById("average-consumption").textContent = t("lower", { mult: (1 / multiplier).toFixed(2) });
-      }
-    }
 
     // Lance toutes les requêtes en parallèle
     const [gCO2eResponse, userData, countryResponse] = await Promise.all([
@@ -243,9 +256,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Gestion de gCO2e
     try {
       if (gCO2eResponse && gCO2eResponse.gCO2e !== undefined) {
-        gCO2eValue = parseFloat(gCO2eResponse.gCO2e).toFixed(2);
+        gCO2eValue = formatGrams(gCO2eResponse.gCO2e);
+        gRating = gCO2eResponse.rating;
+        gCoverage = gCO2eResponse.coverage;
         updateColors(gCO2eValue);
-        updateAverageConsumption(gCO2eValue);
+        updateRating();
       } else {
         updateColors(0);
       }
@@ -361,20 +376,7 @@ function refreshDynamicTexts() {
     updateEquivalents();
 
     if (typeof gCO2eValue !== 'undefined') {
-        const AVERAGE_CONSUMPTION = 0.74;
-        const avgEl = document.getElementById("average-consumption");
-        if (avgEl) {
-             if (gCO2eValue <= 0) {
-                 avgEl.textContent = t("negligible");
-             } else {
-                  let multiplier = gCO2eValue / AVERAGE_CONSUMPTION;
-                  if (multiplier > 1) {
-                     avgEl.textContent = t("higher", { mult: multiplier.toFixed(2) });
-                  } else {
-                     avgEl.textContent = t("lower", { mult: (1 / multiplier).toFixed(2) });
-                  }
-             }
-        }
+        updateRating();
     }
 
     browser.runtime.sendMessage({ type: "getCountryAndUrl" }).then(response => {

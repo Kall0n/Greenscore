@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - "calc/**"
+      - "plugin/**/greenscore-calc.js"
       - ".github/workflows/calc.yml"
   push:
     branches: ["main"]
     paths:
       - "calc/**"
+      - "plugin/**/greenscore-calc.js"
       - ".github/workflows/calc.yml"
   workflow_dispatch:
 
@@ -38,7 +40,8 @@ jobs:
         run: |
           npm run -s generate:intensity
           npm run -s generate:vectors
-          git diff --exit-code -- grid-intensity.json src/grid-intensity.data.js test-vectors.json
+          npm run -s build:plugin
+          git diff --exit-code -- grid-intensity.json src/grid-intensity.data.js test-vectors.json ../plugin/chrome/greenscore-calc.js ../plugin/firefox/src/greenscore-calc.js
 
       - name: Tests
         run: npm test

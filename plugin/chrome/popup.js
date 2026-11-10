@@ -68,20 +68,27 @@ function updateCountrySentence(country) {
   }
 }
 
-function updateAverageConsumption(gCO2e) {
-  const AVERAGE_CONSUMPTION = 0.74;
+// Affiche les grammes sans écraser les pages sobres à « 0.00 » (constat A-10).
+function formatGrams(gCO2e) {
+  const value = Number(gCO2e) || 0;
+  if (value === 0) return "0";
+  if (value >= 0.1) return value.toFixed(2);
+  return String(Number(value.toPrecision(2)));
+}
+
+// Remplace l'ancienne comparaison à une « moyenne » de 0,74 g (calibrée sur le modèle v2)
+// par la note officielle SWDM v4 et le taux de requêtes dont la taille a été mesurée.
+function updateRating(rating, coverage) {
   const avgElem = document.getElementById("average-consumption");
-  if (!avgElem) return;
-  if (gCO2e <= 0) {
-    avgElem.textContent = getI18n('negligible', 'négligeable comparé');
-    return;
+  const line = avgElem?.parentElement;
+  if (!line) return;
+  const fr = chrome.i18n.getUILanguage().startsWith("fr");
+  let text = fr ? `Note ${rating} (échelle SWDM v4)` : `Rating ${rating} (SWDM v4 scale)`;
+  if (typeof coverage === "number" && coverage < 0.9) {
+    const pct = Math.round(coverage * 100);
+    text += fr ? ` · ${pct} % des requêtes mesurées` : ` · ${pct}% of requests measured`;
   }
-  let multiplier = gCO2e / AVERAGE_CONSUMPTION;
-  if (multiplier > 1) {
-    avgElem.textContent = `${multiplier.toFixed(2)}x ${getI18n('superior', 'supérieur')}`;
-  } else {
-    avgElem.textContent = `${(1 / multiplier).toFixed(2)}x ${getI18n('inferior', 'inférieur')}`;
-  }
+  line.textContent = text;
 }
 
 async function updateEquivalents() {
@@ -183,22 +190,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Si ce n'est pas localhost, continuer avec le reste des fonctionnalités
   if (!isLocalhost) {
+    // Couleurs alignées sur les notes SWDM v4 : A+/A vert, B/C jaune, D/E orange, F rouge.
     function getColorClass(gCO2e) {
       const value = Number(gCO2e);
 
-      if (value <= 0.3) {
+      if (value <= 0.079) {
         return {
           text: "text-[#617D3B]",
           bg: "bg-[#ECFDF2]",
           border: "border-[#6D874B]",
         };
-      } else if (value <= 0.7) {
+      } else if (value <= 0.209) {
         return {
           text: "text-[#EAC13A]",
           bg: "bg-[#FFF1C5]",
           border: "border-[#EAC13A]",
         };
-      } else if (value <= 1) {
+      } else if (value <= 0.359) {
         return {
           text: "text-[#E98035]",
           bg: "bg-[#F9D2B6]",
@@ -240,9 +248,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Gestion de gCO2e
     try {
       if (gCO2eResponse && gCO2eResponse.gCO2e !== undefined) {
-        gCO2eValue = parseFloat(gCO2eResponse.gCO2e).toFixed(2);
+        gCO2eValue = formatGrams(gCO2eResponse.gCO2e);
         updateColors(gCO2eValue);
-        updateAverageConsumption(gCO2eValue);
+        updateRating(gCO2eResponse.rating, gCO2eResponse.coverage);
       } else {
         console.warn("Pas de valeur gCO2e reçue");
         updateColors(0);

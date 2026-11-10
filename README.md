@@ -24,7 +24,7 @@ L'accord des auteurs précédents sur la licence reste à obtenir avant toute pu
 |---|---|---|
 | [`backend/`](backend/) | API Rust (Axum, SQLx, MySQL) | Code v2 importé, à corriger (CDCT §2) |
 | [`frontend/`](frontend/) | Application web SvelteKit | Code v2 importé |
-| [`plugin/`](plugin/) | Extensions Firefox et Chrome (deux copies, à unifier : ADR-0003) | Code v2 importé, à corriger |
+| [`plugin/`](plugin/) | Extensions Firefox et Chrome (deux copies, à unifier : ADR-0003) | 1.7.0 : vrais octets transférés + calcul SWDM v4 ([contrôle Chrome](bench/results/plugin-v2-corrige-chrome-2026-11-10.md)) ; reste à corriger : sécurité, vie privée, synchronisation |
 | [`calc/`](calc/) | Module de calcul partagé : SWDM v4, intensité par pays (Ember), note A+–F | ✅ 45 tests, écart nul avec CO2.js (`cd calc && npm ci && npm test`) |
 | [`bench/`](bench/) | Banc de test de précision (avant / après) : protocole et modèle de corpus | 🚧 Corpus et scripts à écrire au Sprint 2 |
 | [`docs/`](docs/) | CDCF, CDCT, méthodologie, ADR | ✅ Version de cadrage |

@@ -10,7 +10,8 @@
   "scripts": {
     "test": "node --test",
     "generate:vectors": "node scripts/generate-vectors.mjs",
-    "generate:intensity": "node scripts/generate-grid-intensity.mjs"
+    "generate:intensity": "node scripts/generate-grid-intensity.mjs",
+    "build:plugin": "node scripts/build-plugin.mjs"
   },
   "engines": {
     "node": ">=20"
