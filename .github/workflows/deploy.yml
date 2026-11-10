@@ -1,0 +1,82 @@
+name: Deploy to AlwaysData
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-alwaysdata-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- PARTIE RUST ---
+      - name: Build Rust (Release)
+        working-directory: ./backend
+        run: |
+          set -euo pipefail
+          cargo build --release
+          strip target/release/backend
+        env:
+          SQLX_OFFLINE: true
+
+      # --- PARTIE SVELTE ---
+      - name: Install & Build Svelte
+        working-directory: ./frontend
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run build
+          npm prune --omit=dev
+          tar -czf ../frontend_deploy.tar.gz build/ node_modules/ package.json package-lock.json
+
+      # --- DÉPLOIEMENT ---
+      - name: Prepare artifacts for deployment
+        run: |
+          set -euo pipefail
+          mkdir -p deploy_folder/frontend
+          mkdir -p deploy_folder/backend
+          cp frontend_deploy.tar.gz deploy_folder/frontend/
+          cp backend/target/release/backend deploy_folder/backend/backend_binary
+
+      - name: Deploy to AlwaysData via SSH
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.ALWAYS_SSH_KEY }}
+          REMOTE_HOST: "ssh-greenscore.alwaysdata.net"
+          REMOTE_USER: "greenscore"
+          TARGET: "/home/greenscore/www/app/"
+          SOURCE: "deploy_folder/"
+          ARGS: "-rlgoDzvc -i"
+
+      # --- REDÉMARRAGE ---
+      - name: Restart Services
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: "ssh-greenscore.alwaysdata.net"
+          username: "greenscore"
+          key: ${{ secrets.ALWAYS_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            APP_DIR="/home/greenscore/www/app"
+            
+            # 1. Gestion du FRONTEND
+            # Remove previous frontend runtime files before extracting the new artifact
+            rm -rf "$APP_DIR/frontend/build" "$APP_DIR/frontend/node_modules"
+            
+            cd "$APP_DIR/frontend/"
+            tar -xzf frontend_deploy.tar.gz
+            rm frontend_deploy.tar.gz
+            
+            # 2. Gestion du BACKEND
+            chmod +x "$APP_DIR/backend/backend_binary"
+            
+            # 3. Restart les serveurs
+            curl --fail --silent --show-error -X POST --basic --user "${{ secrets.ALWAYSDATA_TOKEN }} account=greenscore:" https://api.alwaysdata.com/v1/site/1007299/restart/
+            curl --fail --silent --show-error -X POST --basic --user "${{ secrets.ALWAYSDATA_TOKEN }} account=greenscore:" https://api.alwaysdata.com/v1/service/19361/restart/

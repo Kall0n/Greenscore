@@ -8,15 +8,23 @@ Projet de BUT Informatique 3ᵉ année (SAÉ S5.01 & S6.01), IUT de Bayonne et d
 
 ## État du dépôt
 
-🚧 **Phase de cadrage.** Le dépôt contient :
+🚧 **Début du Sprint 2.** Le dépôt contient :
 - la documentation de conception ;
 - le **module de calcul v3**, implémenté et testé ;
-- le squelette du banc de test de précision.
+- le squelette du banc de test de précision ;
+- le **code de la version 2025-2026** (plugin, API Rust, application SvelteKit), point de départ de la v3.
 
-Le code de l'application (plugin, API Rust, application SvelteKit) sera importé à partir de la version 2025-2026 **après nettoyage** : retrait des secrets et des données personnelles, et accord des auteurs précédents sur la licence (voir [CDCT §14](docs/CDCT.md#14-publication-open-source)).
+Le code 2025-2026 provient du commit `39e3a99` (16/04/2026) de [GreenScorePlugin-Rust-Svelte](https://github.com/green-score-plugin/GreenScorePlugin-Rust-Svelte). Il a été importé **sans son historique**, et nettoyé (voir [CDCT §14](docs/CDCT.md#14-publication-open-source)) :
+- la clé d'API Electricity Maps (S-02) a été retirée des deux plugins. **Elle reste visible dans l'historique du dépôt d'origine et doit être révoquée** ;
+- l'export de base `db/greenscoreweb_database.sql`, qui contenait des comptes réels (S-03), n'a pas été repris. Le schéma et les données de test fictives sont dans `backend/migrations/`.
+
+L'accord des auteurs précédents sur la licence reste à obtenir avant toute publication sous licence libre.
 
 | Dossier | Contenu | État |
 |---|---|---|
+| [`backend/`](backend/) | API Rust (Axum, SQLx, MySQL) | Code v2 importé, à corriger (CDCT §2) |
+| [`frontend/`](frontend/) | Application web SvelteKit | Code v2 importé |
+| [`plugin/`](plugin/) | Extensions Firefox et Chrome (deux copies, à unifier : ADR-0003) | Code v2 importé, à corriger |
 | [`calc/`](calc/) | Module de calcul partagé : SWDM v4, intensité par pays (Ember), note A+–F | ✅ 45 tests, écart nul avec CO2.js (`cd calc && npm ci && npm test`) |
 | [`bench/`](bench/) | Banc de test de précision (avant / après) : protocole et modèle de corpus | 🚧 Corpus et scripts à écrire au Sprint 2 |
 | [`docs/`](docs/) | CDCF, CDCT, méthodologie, ADR | ✅ Version de cadrage |

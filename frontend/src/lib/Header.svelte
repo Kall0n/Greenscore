@@ -1,0 +1,142 @@
+<script lang="ts">
+    import { page } from '$app/state';
+    import { afterNavigate } from '$app/navigation';
+    import { t, locale } from 'svelte-i18n';
+    import { slide, fade } from 'svelte/transition';
+    import type { User} from "$lib/types/account.ts";
+    import greenScoreLogo from '$lib/images/greenscore-logo.png';
+
+    let user = $derived(page.data.userFull?.user as User);
+
+    let profileMenuOpen = $state(false);
+    let mobileMenuOpen = $state(false);
+
+    afterNavigate(() => {
+        mobileMenuOpen = false;
+        profileMenuOpen = false;
+    });
+
+    function toggleProfileMenu() {
+        profileMenuOpen = !profileMenuOpen;
+    }
+
+    function toggleMobileMenu() {
+        mobileMenuOpen = !mobileMenuOpen;
+    }
+
+    function clickOutside(node: HTMLElement) {
+        const handle = (event: MouseEvent) => {
+            if (!node.contains(event.target as Node)) {
+                profileMenuOpen = false;
+                mobileMenuOpen = false;
+            }
+        };
+
+        document.addEventListener('click', handle, true);
+
+        return {
+            destroy() {
+                document.removeEventListener('click', handle, true);
+            }
+        };
+    }
+</script>
+
+
+<header class="flex w-full bg-white py-5 border-b border-grey-100 items-center h-24 relative">
+    <div class="flex items-center w-full justify-between px-8">
+        <div class="flex items-center gap-3">
+            <!-- Logo -->
+            <a class="cursor-pointer" href="/">
+                <img width="55" src="{greenScoreLogo}" alt="Logo" />
+            </a>
+
+            <div class="flex gap-3 ml-2">
+                <button
+                    onclick={() => locale.set('en')}
+                    class="transition-all duration-300 hover:scale-110 cursor-pointer {$locale === 'en' ? 'opacity-100 scale-110 grayscale-0' : 'opacity-50 grayscale hover:grayscale-0 hover:opacity-100'}"
+                    title="English"
+                >
+                    <img src="/images/flags/gb.svg" alt="English" class="w-6 h-auto object-cover rounded shadow-sm" />
+                </button>
+                <button
+                    onclick={() => locale.set('fr')}
+                    class="transition-all duration-300 hover:scale-110 cursor-pointer {$locale === 'fr' ? 'opacity-100 scale-110 grayscale-0' : 'opacity-50 grayscale hover:grayscale-0 hover:opacity-100'}"
+                    title="Français"
+                >
+                    <img src="/images/flags/fr.svg" alt="Français" class="w-6 h-auto object-cover rounded shadow-sm" />
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Menu desktop -->
+        <div class="hidden lg:flex gap-8 items-center">
+            <ul class="flex font-outfit text-grey-950 items-center gap-8 text-lg font-medium">
+                <li><a href="/">{$t('header.home')}</a></li>
+                <li><a href="/mes-donnees">{$t('header.my_data')}</a></li>
+                <li><a href="/mon-organisation">{$t('header.my_organization')}</a></li>
+                <li><a href="/derniere-page-consultee">{$t('header.last_visited_page')}</a></li>
+
+                {#if user}
+                    <li class="relative">
+                        <!-- Empêcher la propagation du clic pour que l'action clickOutside ne ferme pas immédiatement le menu -->
+                        <button onclick={(e) => { e.stopPropagation(); toggleProfileMenu(); }} class="focus:outline-none hover:cursor-pointer" aria-label="Menu profil">
+                            <svg width="34" height="35" viewBox="0 0 34 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0.5" y="1" width="33" height="33" rx="16.5" stroke="#030712" />
+                                <path d="M27 26.5C27 20.6665 23.3636 16.5001 17 16.5" stroke="#233430" />
+                                <path d="M7 26.5C7 20.6665 10.6364 16.5001 17 16.5" stroke="#233430" />
+                                <circle cx="17" cy="11.5" r="4.5" stroke="#233430" />
+                            </svg>
+                        </button>
+
+                        {#if profileMenuOpen}
+                            <!-- Utilisation de l'action pour fermer le menu quand on clique à l'extérieur -->
+                            <div use:clickOutside class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-20">
+                                {#if user}
+                                    <a href="/mon-compte" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">{$t('header.manage_account')}</a>
+                                {/if}
+                                <a href="/logout" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">{$t('header.logout')}</a>
+                            </div>
+                        {/if}
+                    </li>
+                {:else}
+                    <li><a href="/login">{$t('header.login')}</a></li>
+                {/if}
+            </ul>
+        </div>
+
+        <!-- Menu burger -->
+        <div class="lg:hidden flex items-center">
+            <!-- Empêcher la propagation du clic pour éviter la fermeture immédiate via clickOutside -->
+            <button onclick={(e) => { e.stopPropagation(); toggleMobileMenu(); }} class="focus:outline-none cursor-pointer" aria-label="Menu mobile">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    {#if mobileMenuOpen}
+        <!-- Backdrop -->
+        <div transition:fade={{ duration: 200 }} class="absolute top-24 left-0 w-full h-[calc(100vh-6rem)] bg-black/50 z-40 lg:hidden"></div>
+
+        <!-- Ajouter l'action pour fermer le menu mobile quand on clique à l'extérieur -->
+        <div transition:slide={{ duration: 300 }} use:clickOutside class="absolute top-24 left-0 w-full bg-white py-5 z-50 lg:hidden shadow-xl">
+            <ul class="flex flex-col font-outfit font-medium text-grey-950 items-center gap-4 text-lg">
+                <li><a href="/">{$t('header.home')}</a></li>
+                <li><a href="/mes-donnees">{$t('header.my_data')}</a></li>
+                <li><a href="/mon-organisation">{$t('header.my_organization')}</a></li>
+                <li><a href="/derniere-page">{$t('header.last_visited_page')}</a></li>
+
+                {#if user}
+                    <li><a href="/mon-compte">{$t('header.manage_account')}</a></li>
+                    <li><a href="/logout">{$t('header.logout')}</a></li>
+                {:else}
+                    <li><a href="/login">{$t('header.login')}</a></li>
+                {/if}
+            </ul>
+        </div>
+    {/if}
+</header>

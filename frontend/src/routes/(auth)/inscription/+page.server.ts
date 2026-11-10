@@ -1,0 +1,57 @@
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
+import { BACKEND_URL } from '$lib/config';
+import { setSessionCookie } from '$lib/server/session';
+
+export const actions = {
+    default: async ({ request, fetch, cookies }) => {
+        const data = await request.formData();
+        const firstname = data.get('firstname');
+        const lastname = data.get('lastname');
+        const email = data.get('email');
+        const password = data.get('password');
+        const confirmPassword = data.get('confirmPassword');
+        const agreeTerms = data.get('agreeTerms');
+
+        if(!firstname || !lastname || !email || !password) {
+            return fail(400, { message: "errors.server_champs" })
+        }
+
+        if(password !== confirmPassword) {
+            return fail(400, { message: "Les mots de passe ne correspondent pas" })
+        }
+
+        const passwordString = password.toString();
+        const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+        if (!passwordRegex.test(passwordString)) {
+            return fail(400, { message: "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial (#?!@$%^&*-)" })
+        }
+
+        if(agreeTerms !== 'on') {
+            return fail(400, { message: "Vous devez accepter les conditions générales d'utilisation" })
+        }
+
+        try{
+            const response = await fetch(`${BACKEND_URL}/auth/inscription`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, password, firstname, lastname })
+            });
+
+            const result = await response.json();
+
+            if(result.success) {
+                setSessionCookie(cookies, response);
+                redirect(303,'/');
+            }
+
+            return fail(400, { message: result.message || 'errors.connection_error' });
+        }catch (error) {
+            if (error && typeof error === 'object' && ('status' in error || 'location' in error)) {
+                throw error;
+            }
+            return fail(500, { message: 'errors.server_error' });
+        }
+    }
+} satisfies Actions;
