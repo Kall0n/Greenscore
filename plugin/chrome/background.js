@@ -52,10 +52,19 @@ function newPageState(url = null) {
     requests: new Map(),
     // url → tailles Resource Timing reçues avant la fin de la requête correspondante
     timingByUrl: new Map(),
+    // Dernières requêtes mesurées { start, bytes } : servent à rattacher à la bonne page
+    // les requêtes d'une navigation monopage lancées juste avant le changement d'URL.
+    recent: [],
     mainRequestId: null,
     sent: false,
   };
 }
+
+// Une application monopage (SvelteKit, Next.js, React Router…) télécharge souvent les
+// données de la page suivante AVANT de changer l'URL (pushState). Les requêtes lancées
+// dans cette fenêtre avant le changement d'URL sont rattachées à la nouvelle page.
+const SPA_CARRY_MS = 3000;
+const RECENT_MAX = 200;
 
 function getTabData(tabId) {
   if (!tabNetworkData.has(tabId)) {
@@ -82,10 +91,53 @@ function isLocalDomain(url) {
   }
 }
 
-function addMeasuredBytes(tabData, bytes) {
+function addMeasuredBytes(tabData, bytes, start = Date.now()) {
   tabData.measuredRequests++;
   tabData.totalTransferredSize += bytes;
   tabData.totalResourceSize += bytes;
+  tabData.recent.push({ start, bytes });
+  if (tabData.recent.length > RECENT_MAX) tabData.recent.shift();
+}
+
+// Navigation monopage : clôt la page en cours et ouvre la suivante, en y déplaçant les
+// requêtes (mesurées ou non) lancées moins de SPA_CARRY_MS avant le changement d'URL.
+function startSpaPage(tabId, url, timeStamp) {
+  const previous = getTabData(tabId);
+  const cutoff = timeStamp - SPA_CARRY_MS;
+
+  const pending = [...previous.requests].filter(([, r]) => r.start >= cutoff);
+  for (const [requestId] of pending) {
+    previous.requests.delete(requestId);
+    previous.totalRequests--;
+  }
+  const measured = previous.recent.filter((r) => r.start >= cutoff);
+  for (const r of measured) {
+    previous.totalRequests--;
+    previous.measuredRequests--;
+    previous.totalTransferredSize -= r.bytes;
+    previous.totalResourceSize -= r.bytes;
+  }
+  // Tailles Resource Timing déjà reçues pour les requêtes déplacées (et seulement elles)
+  const timing = new Map();
+  for (const [, r] of pending) {
+    if (previous.timingByUrl.has(r.url)) timing.set(r.url, previous.timingByUrl.get(r.url));
+  }
+
+  closeCurrentPage(tabId);
+  const next = startNewPage(tabId, url);
+  next.timingByUrl = timing;
+  for (const [requestId, r] of pending) {
+    next.requests.set(requestId, r);
+    next.totalRequests++;
+    next.startTime = next.startTime === null ? r.start : Math.min(next.startTime, r.start);
+  }
+  for (const r of measured) {
+    next.totalRequests++;
+    addMeasuredBytes(next, r.bytes, r.start);
+    next.startTime = next.startTime === null ? r.start : Math.min(next.startTime, r.start);
+  }
+  for (const [, r] of pending) if (r.done) applyTimingToPending(next, r.url);
+  return next;
 }
 
 // Associe une taille Resource Timing à une requête terminée sans taille connue.
@@ -94,7 +146,7 @@ function applyTimingToPending(tabData, url) {
   if (!sizes || sizes.length === 0) return false;
   for (const [requestId, request] of tabData.requests) {
     if (request.url === url && request.done && !request.measured) {
-      addMeasuredBytes(tabData, sizes.shift());
+      addMeasuredBytes(tabData, sizes.shift(), request.start);
       tabData.requests.delete(requestId);
       if (sizes.length === 0) tabData.timingByUrl.delete(url);
       return true;
@@ -331,8 +383,7 @@ function initializeListeners() {
     if (details.frameId !== 0) return;
     const tabData = getTabData(details.tabId);
     if (tabData.currentUrl === details.url) return;
-    closeCurrentPage(details.tabId);
-    startNewPage(details.tabId, details.url);
+    startSpaPage(details.tabId, details.url, details.timeStamp);
   });
 
   // Gère la fermeture des onglets
@@ -407,6 +458,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
     tabData.requests.set(details.requestId, {
       url: details.url,
+      start: details.timeStamp,
       contentLength: null,
       done: false,
       measured: false,
@@ -447,14 +499,14 @@ chrome.webRequest.onCompleted.addListener(
 
     if (details.fromCache) {
       // Servie par le cache du navigateur : rien n'a transité sur le réseau.
-      addMeasuredBytes(tabData, 0);
+      addMeasuredBytes(tabData, 0, request.start);
       tabData.requests.delete(details.requestId);
     } else if (details.statusCode === 304) {
       // Revalidation : le serveur n'a renvoyé que des en-têtes, pas de corps.
-      addMeasuredBytes(tabData, 0);
+      addMeasuredBytes(tabData, 0, request.start);
       tabData.requests.delete(details.requestId);
     } else if (request.contentLength !== null) {
-      addMeasuredBytes(tabData, request.contentLength);
+      addMeasuredBytes(tabData, request.contentLength, request.start);
       tabData.requests.delete(details.requestId);
     } else {
       // Taille inconnue : on attend la mesure Resource Timing de la page.
@@ -471,7 +523,8 @@ chrome.webRequest.onBeforeRedirect.addListener(
     if (details.tabId === -1 || isLocalDomain(details.url)) return;
 
     const tabData = getTabData(details.tabId);
-    if (tabData.requests.delete(details.requestId)) addMeasuredBytes(tabData, 0);
+    const request = tabData.requests.get(details.requestId);
+    if (request && tabData.requests.delete(details.requestId)) addMeasuredBytes(tabData, 0, request.start);
   },
   { urls: ["<all_urls>"] }
 );
@@ -482,7 +535,8 @@ chrome.webRequest.onErrorOccurred.addListener(
     if (details.tabId === -1 || isLocalDomain(details.url)) return;
 
     const tabData = getTabData(details.tabId);
-    if (tabData.requests.delete(details.requestId)) addMeasuredBytes(tabData, 0);
+    const request = tabData.requests.get(details.requestId);
+    if (request && tabData.requests.delete(details.requestId)) addMeasuredBytes(tabData, 0, request.start);
   },
   { urls: ["<all_urls>"] }
 );
