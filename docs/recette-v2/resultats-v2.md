@@ -132,7 +132,21 @@ Organisation de test « Recette GreenScore 2026 » créée depuis « Mon compte 
 | Fiabilité du total | Mesures **perdues** (T1a, T7), **doublées** (T1b) ou **invisibles** (T4) | Somme des pages = total |
 | Ordre de grandeur | **8 à 57 fois** l'estimation SWDM v4 | Conforme au modèle de référence (O4) |
 
-## Vidéos
+## Vidéos avant / après
+
+Animations générées le 10/11/2026 à partir des **mesures de cette recette**. *Avant* : ce que GreenScore v2 affichait. *Après* : le calcul v3 (SWDM v4, intensité annuelle France 44,18 gCO2e/kWh, Ember) appliqué aux octets mesurés pendant la recette. Chaque vidéo existe en MP4 (1280 × 720, 30 i/s) et en GIF (960 px, 12 i/s).
+
+| Vidéo | Ce qu'elle montre |
+|---|---|
+| [`avant-apres-T6-image-14Mo`](videos/avant-apres-T6-image-14Mo.mp4) ([GIF](videos/avant-apres-T6-image-14Mo.gif)) | Image de 14,7 Mo : v2 **A** « modèle de durabilité » → v3 **F**, 1,26 g |
+| [`avant-apres-T1-wikipedia-596Ko`](videos/avant-apres-T1-wikipedia-596Ko.mp4) ([GIF](videos/avant-apres-T1-wikipedia-596Ko.gif)) | Article de 596 Ko : v2 **G**, 2,6 g → v3 **A**, 0,051 g (×51) |
+| [`avant-apres-T3-parcours-amazon`](videos/avant-apres-T3-parcours-amazon.mp4) ([GIF](videos/avant-apres-T3-parcours-amazon.gif)) | Parcours de 5 pages : v2 +20,53 g sans détail → v3 2,49 g, détaillé page par page |
+| [`avant-apres-T7-application-monopage`](videos/avant-apres-T7-application-monopage.mp4) ([GIF](videos/avant-apres-T7-application-monopage.gif)) | Application monopage : v2 +1,32 g, mauvaise dernière page → v3 0,028 g sur 5 pages vues |
+| [`avant-apres-synthese`](videos/avant-apres-synthese.mp4) ([GIF](videos/avant-apres-synthese.gif)) | Les quatre tests côte à côte |
+
+Sources : [`videos/source/`](videos/source/) (`scene.html` + `render.mjs`, rendu image par image avec Chromium puis encodage ffmpeg). Le plugin corrigé (1.7.0) a aussi été contrôlé en conditions réelles contre la vérité terrain réseau : [`bench/results/plugin-v2-corrige-chrome-2026-11-10.md`](../../bench/results/plugin-v2-corrige-chrome-2026-11-10.md).
+
+## Enregistrements d'écran de la v2
 
 > ⚠️ **Les fichiers vidéo ont été perdus** lors de la suppression du dossier du projet (novembre 2026). Les tableaux ci-dessus conservent toutes les mesures. Les vidéos sont **à réenregistrer** en rejouant les mêmes scénarios.
 

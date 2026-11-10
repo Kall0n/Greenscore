@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>GreenScore avant / après</title>
+<style>
+  :root {
+    --bg: #f6f7f2; --ink: #1d2b1f; --muted: #5d6b60; --card: #ffffff; --line: #dfe4da;
+    --v2: #8a6d5a; --v3: #2f6f3e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+  .stage { position: relative; width: 1280px; height: 720px; padding: 36px 56px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .02em; color: var(--v3); font-size: 20px; }
+  .brand .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--v3); }
+  .brand .tag { margin-left: auto; color: var(--muted); font-weight: 500; font-size: 16px; }
+  h1 { margin-top: 18px; font-size: 40px; line-height: 1.15; font-weight: 800; }
+  .reality { margin-top: 14px; display: inline-block; font-size: 20px; color: var(--muted);
+    background: #e9eee3; border-radius: 999px; padding: 10px 22px; }
+  .reality b { color: var(--ink); }
+  .panels { position: absolute; left: 56px; right: 56px; top: 238px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px 28px; height: 344px; position: relative; overflow: hidden; }
+  .panel.compact .row { margin-top: 14px; }
+  .panel.compact .badge { width: 84px; height: 84px; font-size: 44px; border-radius: 18px; }
+  .panel .label { font-size: 15px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .panel.v2 .label { color: var(--v2); } .panel.v3 .label { color: var(--v3); }
+  .panel .sub { font-size: 15px; color: var(--muted); margin-top: 4px; }
+  .row { display: flex; align-items: center; gap: 22px; margin-top: 22px; }
+  .badge { width: 104px; height: 104px; border-radius: 22px; display: grid; place-items: center; color: #fff;
+    font-size: 54px; font-weight: 800; flex: none; }
+  .grams { font-size: 50px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .grams small { font-size: 22px; font-weight: 600; color: var(--muted); margin-left: 6px; }
+  .grams.na { font-size: 26px; color: var(--muted); font-weight: 700; }
+  .fact { margin-top: 20px; font-size: 19px; line-height: 1.4; }
+  .fact .k { color: var(--muted); }
+  .msg { margin-top: 12px; font-size: 18px; font-style: italic; color: var(--muted); }
+  .bars { margin-top: 14px; display: grid; gap: 6px; }
+  .bar { display: grid; grid-template-columns: 150px 1fr 92px; align-items: center; gap: 10px; font-size: 15px; }
+  .bar .track { height: 16px; background: #eef1ea; border-radius: 8px; overflow: hidden; }
+  .bar .fill { height: 100%; border-radius: 8px; }
+  .bar .val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .verdict { position: absolute; left: 56px; right: 56px; bottom: 58px; font-size: 25px; font-weight: 700; line-height: 1.3;
+    background: var(--ink); color: #fff; border-radius: 14px; padding: 16px 24px; }
+  .verdict em { font-style: normal; color: #b9e28c; }
+  .foot { position: absolute; left: 56px; right: 56px; bottom: 18px; font-size: 13px; color: var(--muted); }
+  table.syn { margin-top: 26px; width: 100%; border-collapse: separate; border-spacing: 0 12px; font-size: 22px; }
+  table.syn td { height: 70px; }
+  table.syn th { text-align: left; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0 14px; }
+  table.syn td { background: var(--card); padding: 12px 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  table.syn td:first-child { border-left: 1px solid var(--line); border-radius: 12px 0 0 12px; }
+  table.syn td:last-child { border-right: 1px solid var(--line); border-radius: 0 12px 12px 0; }
+  .chip { display: inline-grid; place-items: center; min-width: 40px; height: 32px; border-radius: 8px; color: #fff; font-weight: 800; padding: 0 8px; margin-right: 8px; }
+  [data-in] { opacity: 0; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<script>
+// Notes v2 (A–G, échelle maison) et v3 (A+–F, échelle SWDM v4).
+const COLORS = { "A+": "#0b7a3e", A: "#2e9e4f", B: "#7cb342", C: "#d4a514", D: "#ef8f22", E: "#e0592a", F: "#c0262d", G: "#7e1416" };
+const fmt = (g, d) => g.toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d });
+
+const SCENES = {
+  T6: {
+    tag: "Test T6 · recette du 16/10/2026", title: "Une image JPEG de 14,7 Mo",
+    reality: ["<b>14,7 Mo</b> transférés", "<b>1</b> requête"],
+    v2: { rating: "A", grams: null, fact: "<span class='k'>Poids compté :</span> <b>0 Ko</b> (bug Chrome A-02)",
+          msg: "« Bravo ! Ce site est un modèle de durabilité 🌿 »" },
+    v3: { rating: "F", grams: 1.2577, dec: 2, fact: "<span class='k'>Poids compté :</span> <b>14,7 Mo</b> (octets réels)",
+          msg: "Fichier très lourd : la note la plus basse." },
+    verdict: "La v2 félicite une image de 14,7 Mo. <em>La v3 la note F.</em>",
+  },
+  T1: {
+    tag: "Test T1c · recette du 16/10/2026", title: "Article Wikipédia « Centre de données »",
+    reality: ["<b>596 Ko</b> transférés", "<b>36</b> requêtes"],
+    v2: { rating: "G", grams: 2.6, dec: 2, fact: "<span class='k'>Calcul :</span> 39 requêtes × 0,15 Wh × 444 g/kWh<br><span class='k'>Poids compté :</span> <b>0 Ko</b>",
+          msg: "« Destructeur des Écosystèmes »" },
+    v3: { rating: "A", grams: 0.0511, dec: 3, fact: "<span class='k'>Calcul :</span> SWDM v4 · 596 Ko · France<br><span class='k'>Poids compté :</span> <b>596 Ko</b>",
+          msg: "Page légère : bonne note." },
+    verdict: "La v2 surestimait cet article <em>51 fois</em> et lui donnait la pire note.",
+  },
+  T3: {
+    tag: "Test T3 · recette du 16/10/2026", title: "Parcours Amazon : de l'accueil au panier",
+    reality: ["<b>29,0 Mo</b> sur 5 pages", "<b>846</b> requêtes"],
+    v2: { rating: "B", grams: 0.49, dec: 2, fact: "<span class='k'>Affiché :</span> le panier seul, 83 requêtes<br><span class='k'>Ajouté au total :</span> <b>+20,53 g</b>, sans détail",
+          msg: "Temps de chargement affiché : 46,6 s (≈ 2 s en réalité)" },
+    v3: { rating: "F", grams: 2.49, dec: 2, gramsLabel: "pour 5 pages", bars: [
+            ["Accueil", 1.0709, "F"], ["Recherche", 0.7531, "F"], ["Fiche produit", 0.4815, "F"], ["Ajout au panier", 0.0831, "B"], ["Panier", 0.0994, "B"]] },
+    verdict: "La v2 ajoute 20,5 g sans dire où. <em>La v3 détaille chaque page : 2,49 g, 8 fois moins.</em>",
+  },
+  T7: {
+    tag: "Test T7 · recette du 17/10/2026", title: "Application monopage : 5 pages de la doc Svelte",
+    reality: ["<b>328 Ko</b> sur 5 pages", "<b>59</b> requêtes", "aucun rechargement"],
+    v2: { rating: "B", grams: 1.32, dec: 2, gramsLabel: "ajoutés au total", fact: "<span class='k'>Dernière page affichée :</span> « What are runes? »<br>(la vraie dernière page est « $state »)",
+          msg: "≈ 20 requêtes comptées sur 59 ; envois perdus" },
+    v3: { rating: "A+", grams: 0.0281, dec: 3, gramsLabel: "pour les 5 pages", fact: "<span class='k'>Pages vues :</span> <b>5</b>, chacune remise à zéro<br><span class='k'>Poids compté :</span> <b>328 Ko</b>",
+          msg: "Chaque changement d'URL = une page vue." },
+    verdict: "La v2 perd des pages et compte <em>47 fois trop</em>. La v3 suit chaque page.",
+  },
+};
+
+const SYNTHESIS = {
+  tag: "Synthèse · recette du 16-17/10/2026", title: "Le même test, deux versions de GreenScore",
+  rows: [
+    ["Image JPEG 14,7 Mo", ["A", "données indisponibles"], ["F", "1,26 g"]],
+    ["Wikipédia « Centre de données » · 596 Ko", ["G", "2,60 g"], ["A", "0,051 g"]],
+    ["Parcours Amazon · 5 pages · 29 Mo", ["B", "+20,53 g"], ["F", "2,49 g"]],
+    ["Doc Svelte · 5 pages · 328 Ko", ["B", "+1,32 g"], ["A+", "0,028 g"]],
+  ],
+  verdict: "v2 : la note dépend du nombre de requêtes. <em>v3 : elle suit le poids réellement transféré.</em>",
+};
+
+const FOOT = "Avant : affiché par GreenScore v2 pendant la recette. Après : calcul v3 (SWDM v4, France 44,18 gCO2e/kWh, Ember) sur les octets mesurés pendant la recette.";
+
+const params = new URLSearchParams(location.search);
+const id = params.get("scene") || "T6";
+const stage = document.getElementById("stage");
+
+function badge(r) { return `<div class="badge" style="background:${COLORS[r]}">${r}</div>`; }
+function chip(r) { return `<span class="chip" style="background:${COLORS[r]}">${r}</span>`; }
+
+function panel(side, d) {
+  const label = side === "v2" ? "Avant · GreenScore v2" : "Après · GreenScore v3";
+  const sub = side === "v2" ? "Ce que l'extension affichait" : "Octets réels · modèle SWDM v4";
+  const grams = d.grams === null
+    ? `<div class="grams na">Émission : « Données indisponibles »</div>`
+    : `<div class="grams"><span data-count="${d.grams}" data-dec="${d.dec}">0</span><small>gCO2e ${d.gramsLabel || ""}</small></div>`;
+  const bars = d.bars ? `<div class="bars">${d.bars.map(([n, g, r], i) => `
+      <div class="bar" data-in="${5.2 + i * 0.35}"><span>${n}</span><div class="track"><div class="fill" data-w="${g / 1.0709}" style="width:0;background:${COLORS[r]}"></div></div><span class="val">${fmt(g, 2)} g ${r}</span></div>`).join("")}</div>` : "";
+  return `<div class="panel ${side}${d.bars ? " compact" : ""}" data-in="${side === "v2" ? 2.2 : 4.6}">
+    <div class="label">${label}</div><div class="sub">${sub}</div>
+    <div class="row"><div data-in="${side === "v2" ? 2.6 : 5.0}">${badge(d.rating)}</div>${grams}</div>
+    ${d.fact ? `<div class="fact" data-in="${side === "v2" ? 3.0 : 5.6}">${d.fact}</div>` : ""}
+    ${d.msg ? `<div class="msg" data-in="${side === "v2" ? 3.4 : 6.2}">${d.msg}</div>` : ""}
+    ${bars}
+  </div>`;
+}
+
+if (id === "SYN") {
+  const s = SYNTHESIS;
+  stage.innerHTML = `
+    <div class="brand"><span class="dot"></span>GreenScore Web · avant / après<span class="tag">${s.tag}</span></div>
+    <h1 data-in="0.2">${s.title}</h1>
+    <table class="syn"><tr data-in="0.8"><th>Test</th><th>Avant · v2</th><th>Après · v3</th></tr>
+      ${s.rows.map(([t, a, b], i) => `<tr data-in="${1.4 + i * 0.9}"><td>${t}</td><td>${chip(a[0])}${a[1]}</td><td>${chip(b[0])}<b>${b[1]}</b></td></tr>`).join("")}
+    </table>
+    <div class="verdict" data-in="5.6">${s.verdict}</div>
+    <div class="foot">${FOOT}</div>`;
+} else {
+  const s = SCENES[id];
+  stage.innerHTML = `
+    <div class="brand"><span class="dot"></span>GreenScore Web · avant / après<span class="tag">${s.tag}</span></div>
+    <h1 data-in="0.2">${s.title}</h1>
+    <div class="reality" data-in="1.0">Réalité mesurée : ${s.reality.join(" · ")}</div>
+    <div class="panels">${panel("v2", s.v2)}${panel("v3", s.v3)}</div>
+    <div class="verdict" data-in="8.2">${s.verdict}</div>
+    <div class="foot">${FOOT}</div>`;
+}
+
+const ease = (x) => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
+
+// Rendu déterministe d'une image à l'instant t (secondes) : utilisé pour l'export vidéo.
+window.renderFrame = (t) => {
+  for (const el of document.querySelectorAll("[data-in]")) {
+    const p = ease((t - Number(el.dataset.in)) / 0.5);
+    el.style.opacity = p;
+    el.style.transform = `translateY(${(1 - p) * 14}px)`;
+  }
+  for (const el of document.querySelectorAll("[data-count]")) {
+    const start = el.closest(".panel").classList.contains("v2") ? 2.6 : 5.0;
+    const p = ease((t - start) / 1.6);
+    el.textContent = fmt(Number(el.dataset.count) * p, Number(el.dataset.dec));
+  }
+  for (const el of document.querySelectorAll("[data-w]")) {
+    const start = Number(el.closest("[data-in]").dataset.in);
+    el.style.width = `${Math.min(1, Number(el.dataset.w)) * 100 * ease((t - start - 0.2) / 0.8)}%`;
+  }
+};
+window.DURATION = id === "SYN" ? 10 : 12;
+window.renderFrame(0);
+</script>
+</body>
+</html>
